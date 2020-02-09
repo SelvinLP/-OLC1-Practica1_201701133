@@ -16,6 +16,9 @@ public class OLC1_Practica1_201701133 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        F_Principal Form_Principal=new F_Principal();
+        Form_Principal.show();
+        Form_Principal.setLocationRelativeTo(null);
     }
     
 }
