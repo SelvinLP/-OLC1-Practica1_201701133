@@ -5,7 +5,11 @@
  */
 package olc1_practica1_201701133;
 
+import Estructuras.Lista_Tokens;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -18,7 +22,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class F_Principal extends javax.swing.JFrame {
     //Variables de Archivo
     public String Ruta;
+    //Declaracion de Listas
+    ArrayList<Lista_Tokens> L_Tokens;
+    ArrayList<Lista_Tokens> L_Tokens_Error;
     public F_Principal() {
+        //creamos la Lista de Tokens
+        this.L_Tokens = new ArrayList<>();
+        this.L_Tokens_Error=new ArrayList<>();
+        
+        
         initComponents();
     }
 
@@ -54,8 +66,18 @@ public class F_Principal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextPane1);
 
         jButton1.setText("Generar Automatas");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Analizar Entradas");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -270,6 +292,45 @@ public class F_Principal extends javax.swing.JFrame {
         jTextPane1.setText("");
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // Boton que ejecuta Escaner
+        Scanner();
+//        for (Lista_Tokens lt : L_Tokens) {
+//            System.out.println(lt.getLexema()+'\t'+lt.getDescripcion());
+//        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Evento de Expresiones Regulares
+        String ExpresionRegular="";
+        //este boleano sirve para concatenar la expresion regular
+        boolean bandera=false;
+        for (int x = 0; x < L_Tokens.size(); x++) {
+            if(!bandera){
+                if(L_Tokens.get(x).getLexema().equals("-")){
+                    if(L_Tokens.get(x+1).getLexema().equals(">")){
+                        if(L_Tokens.get(x-2).getLexema().equals(":")){
+                            //Son conjuntos
+                        }else{
+                            //con expresiones regulares
+                            bandera=true;
+                            x++;
+                        }
+                    }
+                }
+            }else{
+                if(L_Tokens.get(x).getLexema().equals(";")){
+                    bandera=false;
+                    ExpresionRegular+='\n';
+                    System.out.println(ExpresionRegular);
+                }else{
+                    ExpresionRegular+=L_Tokens.get(x).getLexema();
+                }
+            }
+        }//fin for
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -304,7 +365,284 @@ public class F_Principal extends javax.swing.JFrame {
             }
         });
     }
-
+    //METODOS DE ANALISIS LEXICO DEL ARCHIVO DE ENTRADA
+    public void Scanner(){
+        char Caracter=' ';
+        int Estado=0;
+        int Fila=0;
+        int Columna=1;
+        String Lexema="";
+        String Cadena_Archivo=jTextPane1.getText();
+        for(int i=0;i<Cadena_Archivo.length();i++){
+            Caracter=Cadena_Archivo.charAt(i);
+            
+            switch(Estado){
+                case 0:
+                    
+                     //verificar si es [,:,{,;,},(,),",",],+,-,/,*    
+                    if(Caracter == (char) 33){
+                        L_Tokens.add(new Lista_Tokens(6,Character.toString(Caracter),"Signo de Admiracion",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 34){
+                        L_Tokens.add(new Lista_Tokens(7,Character.toString(Caracter),"Comillas Dobles",Fila,Columna));
+                        Estado = 7;
+                        Columna++;
+                    }else if(Caracter == (char) 35){
+                        L_Tokens.add(new Lista_Tokens(8,Character.toString(Caracter),"Numeral",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 36){
+                        L_Tokens.add(new Lista_Tokens(9,Character.toString(Caracter),"Simbolo Peso",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 37){
+                        L_Tokens.add(new Lista_Tokens(10,Character.toString(Caracter),"Porcentaje",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 38){
+                        L_Tokens.add(new Lista_Tokens(11,Character.toString(Caracter),"Ampersand",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 39){
+                        L_Tokens.add(new Lista_Tokens(12,Character.toString(Caracter),"Comilla Simple",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 40){
+                        L_Tokens.add(new Lista_Tokens(13,Character.toString(Caracter),"Parentesis Izquierdo",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 41){
+                        L_Tokens.add(new Lista_Tokens(14,Character.toString(Caracter),"Parentesis Derecho",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 42){
+                        L_Tokens.add(new Lista_Tokens(15,Character.toString(Caracter),"Asterisco",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 43){
+                        L_Tokens.add(new Lista_Tokens(16,Character.toString(Caracter),"Signo Mas",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 44){
+                        L_Tokens.add(new Lista_Tokens(17,Character.toString(Caracter),"Coma",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 45){
+                        L_Tokens.add(new Lista_Tokens(18,Character.toString(Caracter),"Signo Menos",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 46){
+                        L_Tokens.add(new Lista_Tokens(19,Character.toString(Caracter),"Punto",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 47){
+                        L_Tokens.add(new Lista_Tokens(20,Character.toString(Caracter),"Barra Inclinada",Fila,Columna));
+                        Estado = 3;
+                        Columna++;
+                    }else if(Caracter == (char) 58){
+                        L_Tokens.add(new Lista_Tokens(21,Character.toString(Caracter),"Dos Puntos",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 59){
+                        L_Tokens.add(new Lista_Tokens(22,Character.toString(Caracter),"Punto y Coma",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 60){
+                        L_Tokens.add(new Lista_Tokens(23,Character.toString(Caracter),"Menor Que",Fila,Columna));
+                        Estado = 5;
+                        Columna++;
+                    }else if(Caracter == (char) 61){
+                        L_Tokens.add(new Lista_Tokens(24,Character.toString(Caracter),"Igual Que",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 62){
+                        L_Tokens.add(new Lista_Tokens(25,Character.toString(Caracter),"Mayor Que",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 63){
+                        L_Tokens.add(new Lista_Tokens(26,Character.toString(Caracter),"Interrogacion",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 64){
+                        L_Tokens.add(new Lista_Tokens(27,Character.toString(Caracter),"Arroba",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 91){
+                        L_Tokens.add(new Lista_Tokens(28,Character.toString(Caracter),"Corchete Izquierdo",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 92){
+                        L_Tokens.add(new Lista_Tokens(29,Character.toString(Caracter),"Barra Invertida",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 93){
+                        L_Tokens.add(new Lista_Tokens(30,Character.toString(Caracter),"Corchete Derecho",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 94){
+                        L_Tokens.add(new Lista_Tokens(31,Character.toString(Caracter),"Acento Circunflejo",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 95){
+                        L_Tokens.add(new Lista_Tokens(32,Character.toString(Caracter),"Barra Baja",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 96){
+                        L_Tokens.add(new Lista_Tokens(33,Character.toString(Caracter),"Acento Grave",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 123){
+                        L_Tokens.add(new Lista_Tokens(34,Character.toString(Caracter),"Llave Izquierda",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 124){
+                        L_Tokens.add(new Lista_Tokens(35,Character.toString(Caracter),"Barra Vetical",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 125){
+                        L_Tokens.add(new Lista_Tokens(36,Character.toString(Caracter),"Corchete Derecho",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Caracter == (char) 126){
+                        L_Tokens.add(new Lista_Tokens(37,Character.toString(Caracter),"Tilde",Fila,Columna));
+                        Estado = 0;
+                        Columna++;
+                    }else if(Character.isLetter(Caracter)){
+                        //Verifica si es Letra
+                        Lexema+=Caracter;
+                        Estado = 1;
+                    }else if(Character.isLetter(Caracter)){
+                        //Verifica si es Digito
+                        Lexema+=Caracter;
+                        Estado = 2;
+                    }else if (Caracter == '\n') {
+                        //salto de linea
+                        Columna = 1;
+                        Fila++;
+                        Estado = 0;
+                    } 
+                    else if (Caracter == ' ' | Caracter == '\t' | Caracter == '\b' | Caracter == '\r' | Caracter == '\f') {
+                        //Espacios en blanco
+                    } else {
+                        //Errores Lexicos
+                        L_Tokens_Error.add(new Lista_Tokens(0,Character.toString(Caracter),"Error Lexico",Fila,Columna));
+                        Lexema = "";
+                        Estado = 0;
+                    }
+                 
+                 
+                    break;
+                case 1:
+                    //Verificar si es Letra
+                    if (Character.isLetter(Caracter)) {
+                        Lexema+=Caracter;
+                        Estado = 1;
+                    }else if(Character.isDigit(Caracter)){
+                        //Verifica si es Digito
+                        Lexema += Caracter;
+                        Estado = 1;
+                    }else if(Caracter == (char) 95){
+                        Lexema += Caracter;
+                        Estado = 1;
+                    }else{
+                        
+                        if(Lexema.equals("CONJ")){
+                           L_Tokens.add(new Lista_Tokens(3,Lexema,"Palabra Reservada",Fila,Columna));
+                        }else{
+                            L_Tokens.add(new Lista_Tokens(5,Lexema,"Identificador",Fila,Columna));
+                        }
+                        Columna++;
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    
+                    break;
+                case 2:
+                    //Verifica si es Digito
+                    if (Character.isDigit(Caracter)) {
+                        Lexema += Caracter;
+                        Estado = 2;
+                    }else{
+                        L_Tokens.add(new Lista_Tokens(38,Lexema,"Digito",Fila,Columna));
+                        Columna++;
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    break;
+                case 3:
+                    //Verifica si es Comentario de una linea
+                    if(Caracter == (char) 47){
+                        L_Tokens.add(new Lista_Tokens(20,Character.toString(Caracter),"Barra Inclinada",Fila,Columna));
+                        Estado = 4;
+                        Columna++;
+                    }else{
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    break;
+                case 4:
+                    //Verifica si es Comentario de una linea acepta lo que sea hasta salto de linea
+                    if(Caracter != '\n'){
+                        Lexema+=Caracter;
+                        Estado = 4;
+                    }else{
+                        L_Tokens.add(new Lista_Tokens(1,Lexema,"Comentario de Linea",Fila,Columna));
+                        Columna++;
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    break;
+                case 5:
+                    //Comentario Multilinea
+                    if(Caracter == (char) 33){
+                        L_Tokens.add(new Lista_Tokens(6,Character.toString(Caracter),"Signo de Admiracion",Fila,Columna));
+                        Estado = 6;
+                        Columna++;
+                    }else{
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    break;
+                case 6:
+                    //Comentario Multilinea acepta hasta el signo de admiracion
+                    if(Caracter != (char) 33){
+                        Lexema+=Caracter;
+                        Estado = 6;
+                    }else{
+                        L_Tokens.add(new Lista_Tokens(6,Lexema,"Comentario Multilinea",Fila,Columna));
+                        Columna++;
+                        Lexema = "";
+                        Estado = 0;
+                        i--;
+                    }
+                    break;
+                case 7:
+                    //Comentario Multilinea acepta hasta comilla dobles
+                    if(Caracter != (char) 34){
+                        Lexema+=Caracter;
+                        Estado = 7;
+                    }else{
+                        L_Tokens.add(new Lista_Tokens(7,Lexema,"Lexema de Entrada",Fila,Columna));
+                        Columna++;
+                        Lexema = "";
+                        Estado = 0;
+                        //aceptamos las comillas
+                        L_Tokens.add(new Lista_Tokens(7,Character.toString(Caracter),"Comillas Dobles",Fila,Columna));
+                        Columna++;
+                    }
+                    break;
+                    
+            }
+            
+        }//fin for
+    }//fin metodo
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
