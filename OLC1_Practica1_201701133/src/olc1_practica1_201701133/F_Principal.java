@@ -5,6 +5,7 @@
  */
 package olc1_practica1_201701133;
 
+import Estructuras.Arbol;
 import Estructuras.Lista_ExpyConj;
 import Estructuras.Lista_Tokens;
 import java.io.*;
@@ -323,7 +324,22 @@ public class F_Principal extends javax.swing.JFrame {
         for (int x = 0; x < L_Tokens_ExpyConj.size(); x++) {
             System.out.println(L_Tokens_ExpyConj.get(x).getTipo()+'\t'+L_Tokens_ExpyConj.get(x).getNombre()+'\t'+L_Tokens_ExpyConj.get(x).getContenido());
         }
+        //Temporal
+//        for(int i=0;i<L_Tokens_ExpyConj.size();i++){
+//            System.out.println(L_Tokens_ExpyConj.get(i).getNombre());
+//            for(int x=0;x<L_Tokens_ExpyConj.get(i).getER().size();x++){
+//                System.out.println(L_Tokens_ExpyConj.get(i).getER().get(x));
+//            }
+//        }
         
+        
+        
+        Arbol Ab=new Arbol();
+        try {
+            Ab.Insertar_ER(L_Tokens_ExpyConj.get(4).getER());
+        } catch (IOException ex) {
+            Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
@@ -766,11 +782,16 @@ public class F_Principal extends javax.swing.JFrame {
                         //Concatena las Expresiones regulares
                         if(L_Tokens.get(x).getLexema().equals(";")){
                             bandera=0;
-                            L_Tokens_ExpyConj.add(new Lista_ExpyConj("ER",Nombre,Contenido));
-                            //Guardamos los tokens en una lista para la expresion regular
-                            int ultimo=L_Tokens_ExpyConj.size();
-                            L_Tokens_ExpyConj.get(ultimo-1).setER(tem);
-                            //System.out.println(L_Tokens_ExpyConj.get(ultimo-1).getER().get(2)+"   "+Nombre);
+                            Lista_ExpyConj nuevo=new Lista_ExpyConj("ER",Nombre,Contenido);
+                            nuevo.setER(tem);
+                            L_Tokens_ExpyConj.add(nuevo);
+                            //Temporal
+                            for(int i=0;i<L_Tokens_ExpyConj.size();i++){
+                                System.out.println("Encabezado:     "+L_Tokens_ExpyConj.get(i).getNombre());
+                                for(int y=0;y<L_Tokens_ExpyConj.get(i).getER().size();y++){
+                                    System.out.println(L_Tokens_ExpyConj.get(i).getER().get(y));
+                                }
+                            }
 
                             Nombre="";
                             Contenido="";
@@ -778,6 +799,7 @@ public class F_Principal extends javax.swing.JFrame {
                         }else{
                             Contenido+=L_Tokens.get(x).getLexema();
                             tem.add(L_Tokens.get(x).getLexema());
+                            
                         }
                     }else{
                         //ESTADO 3
