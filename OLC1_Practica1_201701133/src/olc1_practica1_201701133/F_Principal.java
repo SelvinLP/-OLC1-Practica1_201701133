@@ -5,6 +5,7 @@
  */
 package olc1_practica1_201701133;
 
+import Estructuras.Lista_ExpyConj;
 import Estructuras.Lista_Tokens;
 import java.io.*;
 import java.util.ArrayList;
@@ -25,10 +26,12 @@ public class F_Principal extends javax.swing.JFrame {
     //Declaracion de Listas
     ArrayList<Lista_Tokens> L_Tokens;
     ArrayList<Lista_Tokens> L_Tokens_Error;
+    ArrayList<Lista_ExpyConj> L_Tokens_ExpyConj;
     public F_Principal() {
         //creamos la Lista de Tokens
         this.L_Tokens = new ArrayList<>();
         this.L_Tokens_Error=new ArrayList<>();
+        this.L_Tokens_ExpyConj=new ArrayList<>();
         
         
         initComponents();
@@ -55,6 +58,7 @@ public class F_Principal extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -134,8 +138,21 @@ public class F_Principal extends javax.swing.JFrame {
 
         jMenu2.setText("Reportes");
 
-        jMenuItem4.setText("Generar XML");
+        jMenuItem4.setText("Generar Reporte Lexico");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem4);
+
+        jMenuItem7.setText("Generar Reporte Errores");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem7);
 
         jMenuBar1.add(jMenu2);
 
@@ -294,42 +311,38 @@ public class F_Principal extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Boton que ejecuta Escaner
+        L_Tokens.clear();
+        L_Tokens_Error.clear();
+        L_Tokens_ExpyConj.clear();
         Scanner();
-//        for (Lista_Tokens lt : L_Tokens) {
-//            System.out.println(lt.getLexema()+'\t'+lt.getDescripcion());
-//        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Evento de Expresiones Regulares
-        String ExpresionRegular="";
-        //este boleano sirve para concatenar la expresion regular
-        boolean bandera=false;
-        for (int x = 0; x < L_Tokens.size(); x++) {
-            if(!bandera){
-                if(L_Tokens.get(x).getLexema().equals("-")){
-                    if(L_Tokens.get(x+1).getLexema().equals(">")){
-                        if(L_Tokens.get(x-2).getLexema().equals(":")){
-                            //Son conjuntos
-                        }else{
-                            //con expresiones regulares
-                            bandera=true;
-                            x++;
-                        }
-                    }
-                }
-            }else{
-                if(L_Tokens.get(x).getLexema().equals(";")){
-                    bandera=false;
-                    ExpresionRegular+='\n';
-                    System.out.println(ExpresionRegular);
-                }else{
-                    ExpresionRegular+=L_Tokens.get(x).getLexema();
-                }
-            }
-        }//fin for
-
+        Mini_Parser();
+        for (int x = 0; x < L_Tokens_ExpyConj.size(); x++) {
+            System.out.println(L_Tokens_ExpyConj.get(x).getTipo()+'\t'+L_Tokens_ExpyConj.get(x).getNombre()+'\t'+L_Tokens_ExpyConj.get(x).getContenido());
+        }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        try {
+            // Evento generar REPORTE LEXICO
+            Graficar_Reporte_Lexico(true);
+        } catch (IOException ex) {
+            Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        try {
+            // Evento generar REPORTE LEXICO ERRORES
+            Graficar_Reporte_Lexico(false);
+        } catch (IOException ex) {
+            Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -512,7 +525,7 @@ public class F_Principal extends javax.swing.JFrame {
                         //Verifica si es Letra
                         Lexema+=Caracter;
                         Estado = 1;
-                    }else if(Character.isLetter(Caracter)){
+                    }else if(Character.isDigit(Caracter)){
                         //Verifica si es Digito
                         Lexema+=Caracter;
                         Estado = 2;
@@ -643,6 +656,147 @@ public class F_Principal extends javax.swing.JFrame {
         }//fin for
     }//fin metodo
     
+    //METODO DE GAFICAR
+    public void Graficar_Reporte_Lexico(boolean TokensoError) throws IOException{
+        String Nombre="";
+        if(TokensoError){
+            //Son Tokens
+            Nombre+="TABLA DE TOKENS";
+        }else{
+            //Errores
+            Nombre+="TABLA DE ERRORES";
+        }
+
+        String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'>"+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
+
+        CadenaImprimir+=" <tr><td><b>No.</b></td><td><b>Id</b></td><td><b>Lexema</b></td><td><b>Descripcion</b></td><td><b>Fila</b></td><td><b>Columna</b></td></tr>"+'\n';
+        if(TokensoError){
+            for(int i=0;i<L_Tokens.size();i++){
+                CadenaImprimir+="<tr><td>"+i+"</td>"+"<td>"+L_Tokens.get(i).getID()+"</td>"+"<td>"+L_Tokens.get(i).getLexema()+"</td>"+"<td>"+L_Tokens.get(i).getDescripcion()+"</td>"+"<td>"+L_Tokens.get(i).getFila()+"</td>"+"<td>"+L_Tokens.get(i).getColumna()+"</td></tr>"+'\n';
+            }
+        }else{
+            for(int i=0;i<L_Tokens_Error.size();i++){
+                CadenaImprimir+="<tr><td>"+i+"</td>"+"<td>"+L_Tokens_Error.get(i).getID()+"</td>"+"<td>"+L_Tokens_Error.get(i).getLexema()+"</td>"+"<td>"+L_Tokens_Error.get(i).getDescripcion()+"</td>"+"<td>"+L_Tokens_Error.get(i).getFila()+"</td>"+"<td>"+L_Tokens_Error.get(i).getColumna()+"</td></tr>"+'\n';
+            }
+        }
+
+        CadenaImprimir+="</table></body></html>";
+        
+        String ruta = "Reporte_Lexico.html";
+        File archivo = new File(ruta);
+        try {
+            if (!archivo.exists()) {
+                archivo.createNewFile();
+            }
+            FileWriter Fw = new FileWriter(archivo);
+            BufferedWriter Bw = new BufferedWriter(Fw);
+            Bw.write(CadenaImprimir);
+            Bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+
+            Runtime.getRuntime().exec("cmd /C Reporte_Lexico.html");  
+            
+        }catch (IOException ioe) {
+            //en caso de error
+            System.out.println (ioe);
+        }
+
+
+    }    
+    
+    //METODO PARA GUARDAR CONJUNTOS,LEXEMAS DE ENTRADA Y EXPRESIONES REGULARES
+    public void Mini_Parser(){
+        String Nombre="";
+        String Contenido="";
+        ArrayList<String>tem=new ArrayList<>();
+        //este boleano sirve para concatenar la expresion regular
+        int bandera=0;
+        //0 iteracion normal
+        //1 son conjuntos
+        //2 Expresiones regulares
+        //3 Lexemas de Entrada
+        for (int x = 0; x < L_Tokens.size(); x++) {
+            //ESTADO 0
+            if(bandera==0){
+                if(L_Tokens.get(x).getLexema().equals("-")){
+                    if(L_Tokens.get(x+1).getLexema().equals(">")){
+                        if(L_Tokens.get(x-2).getLexema().equals(":")){
+                            //Son conjuntos
+                            Nombre=L_Tokens.get(x-1).getLexema();
+                            bandera=1;
+                            x++;
+                        }else{
+                            //con expresiones regulares
+                            Nombre=L_Tokens.get(x-1).getLexema();
+                            bandera=2;
+                            x++;
+                        }
+                    }
+                }else{
+                    if(L_Tokens.get(x).getLexema().equals("%")&&L_Tokens.get(x+1).getLexema().equals("%")&&L_Tokens.get(x+2).getLexema().equals("%")&&L_Tokens.get(x+3).getLexema().equals("%")){
+                        bandera=3;
+                    }
+                }
+            }else{
+                //ESTADO 1
+                if(bandera==1){
+                    //Concatena los conjuntos
+                    if(L_Tokens.get(x).getLexema().equals(";")){
+                        bandera=0;
+                        L_Tokens_ExpyConj.add(new Lista_ExpyConj("Conj",Nombre,Contenido));
+                        Nombre="";
+                        Contenido="";
+                    }else{
+                        //validacion de espacio entra las comas
+                        if(L_Tokens.get(x).getLexema().equals(",") && L_Tokens.get(x+1).getLexema().equals(",")){
+                            L_Tokens.add(new Lista_Tokens(39," ","Espacio",L_Tokens.get(x).getFila(),L_Tokens.get(x).getColumna()));
+                            Contenido+=L_Tokens.get(x).getLexema();
+                            Contenido+=" ";
+                        }else{
+                           Contenido+=L_Tokens.get(x).getLexema(); 
+                        }
+                        
+                    }
+                }else{
+                    //ESTADO 2
+                    if(bandera==2){
+                        //Concatena las Expresiones regulares
+                        if(L_Tokens.get(x).getLexema().equals(";")){
+                            bandera=0;
+                            L_Tokens_ExpyConj.add(new Lista_ExpyConj("ER",Nombre,Contenido));
+                            //Guardamos los tokens en una lista para la expresion regular
+                            int ultimo=L_Tokens_ExpyConj.size();
+                            L_Tokens_ExpyConj.get(ultimo-1).setER(tem);
+                            //System.out.println(L_Tokens_ExpyConj.get(ultimo-1).getER().get(2)+"   "+Nombre);
+
+                            Nombre="";
+                            Contenido="";
+                            tem.clear();
+                        }else{
+                            Contenido+=L_Tokens.get(x).getLexema();
+                            tem.add(L_Tokens.get(x).getLexema());
+                        }
+                    }else{
+                        //ESTADO 3
+                        if(bandera==3){
+                            //Concatenacion de Lezema de entrada o validacion de %%%%
+                            if(L_Tokens.get(x).getLexema().equals(":")){
+                                Nombre=L_Tokens.get(x-1).getLexema();
+                                Contenido=L_Tokens.get(x+2).getLexema();
+                                L_Tokens_ExpyConj.add(new Lista_ExpyConj("Lex",Nombre,Contenido));
+                            }
+                        }
+                    }
+                }
+
+            }
+        }//fin for
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -656,6 +810,7 @@ public class F_Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
     public javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JTextPane jTextPane1;

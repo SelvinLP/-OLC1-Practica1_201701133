@@ -5,6 +5,7 @@
  */
 package Estructuras;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -27,11 +28,21 @@ public class Arbol {
     public Arbol() {
         Raiz=null;
     }
-    public void Insertar_ER(String ER){
-        
+    public void Insertar_ER(ArrayList<String> L_Tokens){
+        String Cadena="";
+        for(int i = L_Tokens.size()-1; i >=0; i--){
+            if(L_Tokens.get(i).equals("}")){
+                Cadena=L_Tokens.get(i)+L_Tokens.get(i-1)+L_Tokens.get(i-2);
+                i=i-2;
+                Insertar_Arbol(Raiz,Cadena);
+            }else{
+                Cadena="";
+                Insertar_Arbol(Raiz,L_Tokens.get(i));
+            }
+        }
         
     }
-    public void Insertar_Arbol(Nodo_Arbol raiz){
+    public void Insertar_Arbol(Nodo_Arbol raiz,String Dato){
         
     }
     
