@@ -5,13 +5,10 @@
  */
 package olc1_practica1_201701133;
 
-import Estructuras.Arbol;
-import Estructuras.Lista_ExpyConj;
-import Estructuras.Lista_Tokens;
+import Estructuras.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -27,12 +24,16 @@ public class F_Principal extends javax.swing.JFrame {
     //Declaracion de Listas
     ArrayList<Lista_Tokens> L_Tokens;
     ArrayList<Lista_Tokens> L_Tokens_Error;
-    ArrayList<Lista_ExpyConj> L_Tokens_ExpyConj;
+    ArrayList<Lista_Conjuntos> L_Tokens_Conj;
+    ArrayList<Lista_ER> L_Tokens_ER;
+    ArrayList<Lista_LexemasE> L_Tokens_Lex;
     public F_Principal() {
         //creamos la Lista de Tokens
         this.L_Tokens = new ArrayList<>();
         this.L_Tokens_Error=new ArrayList<>();
-        this.L_Tokens_ExpyConj=new ArrayList<>();
+        this.L_Tokens_ER=new ArrayList<>();
+        this.L_Tokens_Conj=new ArrayList<>();
+        this.L_Tokens_Lex=new ArrayList<>();
         
         
         initComponents();
@@ -314,32 +315,30 @@ public class F_Principal extends javax.swing.JFrame {
         // Boton que ejecuta Escaner
         L_Tokens.clear();
         L_Tokens_Error.clear();
-        L_Tokens_ExpyConj.clear();
+        L_Tokens_ER.clear();
+        L_Tokens_Conj.clear();
+        L_Tokens_Lex.clear();
         Scanner();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Evento de Expresiones Regulares
         Mini_Parser();
-        for (int x = 0; x < L_Tokens_ExpyConj.size(); x++) {
-            System.out.println(L_Tokens_ExpyConj.get(x).getTipo()+'\t'+L_Tokens_ExpyConj.get(x).getNombre()+'\t'+L_Tokens_ExpyConj.get(x).getContenido());
-        }
-        //Temporal
-//        for(int i=0;i<L_Tokens_ExpyConj.size();i++){
-//            System.out.println(L_Tokens_ExpyConj.get(i).getNombre());
-//            for(int x=0;x<L_Tokens_ExpyConj.get(i).getER().size();x++){
-//                System.out.println(L_Tokens_ExpyConj.get(i).getER().get(x));
+//        System.out.println("CONJUNTOS");
+//        for(int i=0;i<L_Tokens_Conj.size();i++){
+//            System.out.println(L_Tokens_Conj.get(i).getNombre()+"    | ---------- |    "+L_Tokens_Conj.get(i).getContenido());
+//        }
+//        System.out.println("EXPRESIONES REGULARES");
+//        for(int i=0;i<L_Tokens_ER.size();i++){
+//            System.out.println(L_Tokens_ER.get(i).getNombre()+"    | ---------- |    ");
+//            for(int x=0;x<L_Tokens_ER.get(i).getER().size();x++){
+//                System.out.print(L_Tokens_ER.get(i).getER().get(x));
 //            }
 //        }
-        
-        
-        
-        Arbol Ab=new Arbol();
-        try {
-            Ab.Insertar_ER(L_Tokens_ExpyConj.get(4).getER());
-        } catch (IOException ex) {
-            Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        System.out.println("LEXEMAS");
+//        for(int i=0;i<L_Tokens_Lex.size();i++){
+//            System.out.println(L_Tokens_Lex.get(i).getNombre()+"    | ---------- |    "+L_Tokens_Lex.get(i).getContenido());
+//        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
@@ -407,8 +406,7 @@ public class F_Principal extends javax.swing.JFrame {
             
             switch(Estado){
                 case 0:
-                    
-                     //verificar si es [,:,{,;,},(,),",",],+,-,/,*    
+                     
                     if(Caracter == (char) 33){
                         L_Tokens.add(new Lista_Tokens(6,Character.toString(Caracter),"Signo de Admiracion",Fila,Columna));
                         Estado = 0;
@@ -644,7 +642,7 @@ public class F_Principal extends javax.swing.JFrame {
                         Lexema+=Caracter;
                         Estado = 6;
                     }else{
-                        L_Tokens.add(new Lista_Tokens(6,Lexema,"Comentario Multilinea",Fila,Columna));
+                        L_Tokens.add(new Lista_Tokens(2,Lexema,"Comentario Multilinea",Fila,Columna));
                         Columna++;
                         Lexema = "";
                         Estado = 0;
@@ -657,7 +655,7 @@ public class F_Principal extends javax.swing.JFrame {
                         Lexema+=Caracter;
                         Estado = 7;
                     }else{
-                        L_Tokens.add(new Lista_Tokens(7,Lexema,"Lexema de Entrada",Fila,Columna));
+                        L_Tokens.add(new Lista_Tokens(4,Lexema,"Lexema de Entrada",Fila,Columna));
                         Columna++;
                         Lexema = "";
                         Estado = 0;
@@ -725,97 +723,144 @@ public class F_Principal extends javax.swing.JFrame {
     
     //METODO PARA GUARDAR CONJUNTOS,LEXEMAS DE ENTRADA Y EXPRESIONES REGULARES
     public void Mini_Parser(){
+        Lista_ER Nuevo=null;
         String Nombre="";
         String Contenido="";
-        ArrayList<String>tem=new ArrayList<>();
+        ArrayList<String> tem = new ArrayList<String>();
         //este boleano sirve para concatenar la expresion regular
-        int bandera=0;
-        //0 iteracion normal
-        //1 son conjuntos
-        //2 Expresiones regulares
-        //3 Lexemas de Entrada
+        int Estado=0;
         for (int x = 0; x < L_Tokens.size(); x++) {
-            //ESTADO 0
-            if(bandera==0){
-                if(L_Tokens.get(x).getLexema().equals("-")){
-                    if(L_Tokens.get(x+1).getLexema().equals(">")){
-                        if(L_Tokens.get(x-2).getLexema().equals(":")){
-                            //Son conjuntos
-                            Nombre=L_Tokens.get(x-1).getLexema();
-                            bandera=1;
-                            x++;
-                        }else{
-                            //con expresiones regulares
-                            Nombre=L_Tokens.get(x-1).getLexema();
-                            bandera=2;
-                            x++;
+            switch(Estado){
+                //ESTADO 0
+                case 0:
+                    //Conjuntos
+                    if(L_Tokens.get(x).getLexema().equals("CONJ")){
+                        if(L_Tokens.get(x+1).getLexema().equals(":")){
+                            if(L_Tokens.get(x+2).getDescripcion().equals("Identificador")){
+                                //Son conjuntos 
+                                Nombre=L_Tokens.get(x+2).getLexema();
+                                Estado=1;
+                                x=x+4;
+                            }
                         }
                     }
-                }else{
-                    if(L_Tokens.get(x).getLexema().equals("%")&&L_Tokens.get(x+1).getLexema().equals("%")&&L_Tokens.get(x+2).getLexema().equals("%")&&L_Tokens.get(x+3).getLexema().equals("%")){
-                        bandera=3;
+                    if(L_Tokens.get(x).getDescripcion().equals("Identificador")){
+                        //pasaa estado de expresion regular
+                        Nombre=L_Tokens.get(x).getLexema();
+                        Estado=2;
                     }
-                }
-            }else{
-                //ESTADO 1
-                if(bandera==1){
+                    break;
+                    
+                case 1:
+                    //ESTADO 1
                     //Concatena los conjuntos
-                    if(L_Tokens.get(x).getLexema().equals(";")){
-                        bandera=0;
-                        L_Tokens_ExpyConj.add(new Lista_ExpyConj("Conj",Nombre,Contenido));
-                        Nombre="";
-                        Contenido="";
-                    }else{
-                        //validacion de espacio entra las comas
-                        if(L_Tokens.get(x).getLexema().equals(",") && L_Tokens.get(x+1).getLexema().equals(",")){
-                            L_Tokens.add(new Lista_Tokens(39," ","Espacio",L_Tokens.get(x).getFila(),L_Tokens.get(x).getColumna()));
-                            Contenido+=L_Tokens.get(x).getLexema();
-                            Contenido+=" ";
-                        }else{
-                           Contenido+=L_Tokens.get(x).getLexema(); 
+                    if(L_Tokens.get(x).getDescripcion().equals("Identificador")){
+                        if(L_Tokens.get(x+1).getDescripcion().equals("Tilde")){
+                            Contenido=L_Tokens.get(x).getLexema()+L_Tokens.get(x+1).getLexema()+L_Tokens.get(x+2).getLexema();
+                            L_Tokens_Conj.add(new Lista_Conjuntos(Nombre, Contenido));
+                            x=x+2;
+                            Estado=0;
                         }
                         
                     }
-                }else{
-                    //ESTADO 2
-                    if(bandera==2){
-                        //Concatena las Expresiones regulares
-                        if(L_Tokens.get(x).getLexema().equals(";")){
-                            bandera=0;
-                            Lista_ExpyConj nuevo=new Lista_ExpyConj("ER",Nombre,Contenido);
-                            nuevo.setER(tem);
-                            L_Tokens_ExpyConj.add(nuevo);
-                            //Temporal
-                            for(int i=0;i<L_Tokens_ExpyConj.size();i++){
-                                System.out.println("Encabezado:     "+L_Tokens_ExpyConj.get(i).getNombre());
-                                for(int y=0;y<L_Tokens_ExpyConj.get(i).getER().size();y++){
-                                    System.out.println(L_Tokens_ExpyConj.get(i).getER().get(y));
-                                }
+                    if(L_Tokens.get(x).getDescripcion().equals("Digito")){
+                        if(L_Tokens.get(x+1).getDescripcion().equals("Tilde")){
+                            Contenido=L_Tokens.get(x).getLexema()+L_Tokens.get(x+1).getLexema()+L_Tokens.get(x+2).getLexema();
+                            L_Tokens_Conj.add(new Lista_Conjuntos(Nombre, Contenido));
+                            x=x+2;
+                            Estado=0;
+                        }
+                        
+                    }
+                    for(int i=6;i<=37;i++){
+                        if(L_Tokens.get(x).getID()==i){
+                            if(L_Tokens.get(x+1).getDescripcion().equals("Tilde")){
+                                Contenido=L_Tokens.get(x).getLexema()+L_Tokens.get(x+1).getLexema()+L_Tokens.get(x+2).getLexema();
+                                L_Tokens_Conj.add(new Lista_Conjuntos(Nombre, Contenido));
+                                x=x+2;
+                                Estado=0;
                             }
-
-                            Nombre="";
-                            Contenido="";
-                            tem.clear();
-                        }else{
-                            Contenido+=L_Tokens.get(x).getLexema();
-                            tem.add(L_Tokens.get(x).getLexema());
                             
                         }
+                    }
+                    //conjunto sin llaves
+                    if(L_Tokens.get(x).getLexema().equals(";")){
+                        if(L_Tokens.get(x-1).getLexema().equals(",")){
+                        }else{
+                            L_Tokens_Conj.add(new Lista_Conjuntos(Nombre, Contenido));
+                            Estado=0;
+                            Contenido="";
+
+                        }
                     }else{
-                        //ESTADO 3
-                        if(bandera==3){
-                            //Concatenacion de Lezema de entrada o validacion de %%%%
-                            if(L_Tokens.get(x).getLexema().equals(":")){
-                                Nombre=L_Tokens.get(x-1).getLexema();
-                                Contenido=L_Tokens.get(x+2).getLexema();
-                                L_Tokens_ExpyConj.add(new Lista_ExpyConj("Lex",Nombre,Contenido));
-                            }
+                        Contenido+=L_Tokens.get(x).getLexema();
+                    }
+                    
+
+                    break;
+                case 2:
+                    //ESTADO 2
+                    if(L_Tokens.get(x).getLexema().equals("-")){
+                        if(L_Tokens.get(x+1).getLexema().equals(">")){
+                            //se mira que es expresion regular
+                            
+                            Lista_ER nuevo=new Lista_ER(L_Tokens.get(x-1).getLexema());
+                            Nuevo=nuevo;
+                            L_Tokens_ER.add(nuevo);
+                            x++;
+                            Estado=3;
                         }
                     }
-                }
-
-            }
-        }//fin for
+                    if(L_Tokens.get(x).getLexema().equals(":")){
+                        //se mira que es lexema
+                       Estado=4;
+                    }
+                    break;
+                case 3:       
+                    //ESTADO 3
+                    //Concatenacion de Expresion Regular
+                    
+                    //System.out.println("---------------------------------"+ L_Tokens.get(x).getLexema());
+                    if(L_Tokens.get(x).getDescripcion().equals("Punto")){
+                        Nuevo.setER(L_Tokens.get(x).getLexema());
+                    }
+                    if(L_Tokens.get(x).getDescripcion().equals("Barra Vetical")){
+                        Nuevo.setER(L_Tokens.get(x).getLexema());
+                    }
+                    if(L_Tokens.get(x).getDescripcion().equals("Interrogacion")){
+                        Nuevo.setER(L_Tokens.get(x).getLexema());
+                    }
+                    if(L_Tokens.get(x).getDescripcion().equals("Asterisco")){
+                        Nuevo.setER(L_Tokens.get(x).getLexema());
+                    }
+                    if(L_Tokens.get(x).getDescripcion().equals("Signo Mas")){
+                        Nuevo.setER(L_Tokens.get(x).getLexema());
+                    }
+                    if(L_Tokens.get(x).getDescripcion().equals("Lexema de Entrada")){  
+                        String tem1='"'+L_Tokens.get(x).getLexema()+'"';
+                        Nuevo.setER(tem1);
+                        
+                    }
+                    if(L_Tokens.get(x).getLexema().equals("{")){  
+                        String tem1="";
+                        if(L_Tokens.get(x+2).getLexema().equals("}")){
+                            tem1=L_Tokens.get(x).getLexema()+L_Tokens.get(x+1).getLexema()+L_Tokens.get(x+2).getLexema();
+                            Nuevo.setER(tem1);
+                        }
+                    }
+                    if(L_Tokens.get(x).getLexema().equals(";")){
+                        Estado=0;
+                    }
+                    break;
+                case 4:
+//                    System.out.println(L_Tokens.get(x).getLexema());
+                    Contenido=L_Tokens.get(x+1).getLexema();
+                    L_Tokens_Lex.add(new Lista_LexemasE(L_Tokens.get(x-2).getLexema(), Contenido));
+                    Estado=0;
+                    
+                    break;
+            }//fin switch
+        }//Fin for
     }
     
     

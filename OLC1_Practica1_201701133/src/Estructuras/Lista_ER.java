@@ -6,37 +6,28 @@
 package Estructuras;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  *
  * @author Aragon Perez
  */
-public class Lista_ExpyConj {
-    private String Tipo;
+public class Lista_ER {
     private String Nombre;
-    private String Contenido;
     private ArrayList<String> ExpresionRegular;
     
-    public Lista_ExpyConj(String tipo,String nombre, String contenido) {
-        this.Tipo=tipo;
+    public Lista_ER(String nombre) {
         this.Nombre=nombre;
-        this.Contenido=contenido;
         ExpresionRegular=new ArrayList<>();
     }
     //Metodos de Acceso
-    public String getTipo(){
-        return Tipo;
-    }
     public String getNombre(){
         return Nombre;
     }
-    public String getContenido(){
-        return Contenido;
-    }
-    public ArrayList<String> getER(){
+    public ArrayList getER(){
         return ExpresionRegular;
     }
-    public void setER(ArrayList<String> Dato){
-        this.ExpresionRegular=Dato;
+    public void setER(String Datos){
+        ExpresionRegular.add(Datos);
     }
 }

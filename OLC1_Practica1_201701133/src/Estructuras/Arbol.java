@@ -32,34 +32,27 @@ public class Arbol {
     public Arbol() {
         Raiz=null;
     }
-    public void Insertar_ER(ArrayList<String> L_Tokens) throws IOException{
-        int cantidad=0;
-        String Cadena="";
-        for(int i = L_Tokens.size()-1; i >=0; i--){
-            if(L_Tokens.get(i).equals("}")){
-                Cadena=L_Tokens.get(i)+L_Tokens.get(i-1)+L_Tokens.get(i-2);
-                i=i-2;
-                cantidad++;
-            }else{
-                Cadena=L_Tokens.get(i);
-                cantidad++;
-            }
-            if(L_Tokens.get(i).equals(".")||L_Tokens.get(i).equals("|")||L_Tokens.get(i).equals("?")||L_Tokens.get(i).equals("*")||L_Tokens.get(i).equals("+")){
-                if(cantidad==1){
-                    Insertar_Arbol_Simple(Raiz, Cadena, L_Tokens.get(i));
-                    System.out.println("Llego Aqui");
-                }
-                cantidad=0;
-            }
-        }
-        //GraficarArbol();
-    }
-    public void Insertar_Arbol_Simple(Nodo_Arbol raiz,String Dato1,String operador){
+    public void Insertar_Arbol_Simple(String Dato1,String operador){
         Nodo_Arbol nuevo=new Nodo_Arbol(operador);
         Nodo_Arbol dato1=new Nodo_Arbol(Dato1);
         nuevo.Derecha=dato1;
-        nuevo.Izquierda=raiz;
-        raiz=nuevo;
+        nuevo.Izquierda=this.Raiz;
+        this.Raiz=nuevo;
+        
+    }    
+    public void Insertar_Arbol_Doble(String Dato1,String Dato2,String operador){
+        Nodo_Arbol dato2=new Nodo_Arbol(Dato2);
+        Nodo_Arbol nuevo=new Nodo_Arbol(operador);
+        Nodo_Arbol dato1=new Nodo_Arbol(Dato1);
+        nuevo.Derecha=dato2;
+        nuevo.Izquierda=dato1;
+        this.Raiz=nuevo;
+        
+    }
+    public void Insertar_Arbol_Unica(String operador){
+        Nodo_Arbol nuevo=new Nodo_Arbol(operador);
+        nuevo.Izquierda=this.Raiz;
+        this.Raiz=nuevo;
         
     }
     public void GraficarArbol() throws IOException{
