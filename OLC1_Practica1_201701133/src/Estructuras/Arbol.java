@@ -17,14 +17,16 @@ class Nodo_Arbol{
     public int No;
     public String Indentificador;
     public String Anulable;
-    public LinkedList Primeros;
-    public LinkedList Ultimos;
+    public ArrayList<Integer> Primeros;
+    public ArrayList<Integer> Ultimos;
     public Nodo_Arbol Izquierda;
     public Nodo_Arbol Derecha;
 
     public Nodo_Arbol(int no,String Id) {
         this.No=no;
         this.Indentificador=Id;
+        Ultimos=new ArrayList<>();
+        Primeros=new ArrayList<>();
     }
     
 }
@@ -51,6 +53,7 @@ public class Arbol {
             
         }
         RecorridoAnulables(Raiz);
+        RecorridoPrimeros(Raiz, 1);
     }
     public boolean Insertar_Arbol(Boolean bandera,Nodo_Arbol Rz,Nodo_Arbol nuevo){
         
@@ -121,6 +124,67 @@ public class Arbol {
             }
         }
     }
+    
+    public void RecorridoPrimeros(Nodo_Arbol Rz,int CantidadHojas){
+        if(Rz.Izquierda !=null ){
+            RecorridoAnulables(Rz.Izquierda);
+        }
+        if(Rz.Derecha !=null ){
+            RecorridoAnulables(Rz.Derecha);
+        }
+        //Validacion de Primeros
+        //Hojas
+        if(Rz.Izquierda==null && Rz.Derecha==null){
+            Rz.Primeros.add(CantidadHojas);
+            CantidadHojas++;
+        }
+        //Operadores
+        if(Rz.Indentificador.equals("*") || Rz.Indentificador.equals("+") || Rz.Indentificador.equals("?")){
+            for(int i=0;i<Rz.Izquierda.Primeros.size();i++){
+                Rz.Primeros.add(Rz.Izquierda.Primeros.get(i));
+            }
+        }
+        if(Rz.Indentificador.equals("|")){
+            //Izquierda 
+            for(int i=0;i<Rz.Izquierda.Primeros.size();i++){
+                Rz.Primeros.add(Rz.Izquierda.Primeros.get(i));
+            }
+            //Mas Derecha
+            for(int i=0;i<Rz.Derecha.Primeros.size();i++){
+                //validacion si existe sino no lo agrega
+                for(int i2=0;i2<Rz.Izquierda.Primeros.size();i2++){
+                    if(Rz.Izquierda.Primeros.get(i2).equals(Rz.Derecha.Primeros.get(i))){
+                        //no lo agrega porque son iguales
+                    }else{Rz.Primeros.add(Rz.Derecha.Primeros.get(i));}
+                }
+            }
+        }
+        if(Rz.Indentificador.equals(".")){
+            if(Rz.Izquierda.Anulable.equals("Anulable")){
+                //se agregan los dos
+                //Izquierda 
+                for(int i=0;i<Rz.Izquierda.Primeros.size();i++){
+                    Rz.Primeros.add(Rz.Izquierda.Primeros.get(i));
+                }
+                //Mas Derecha
+                for(int i=0;i<Rz.Derecha.Primeros.size();i++){
+                    //validacion si existe sino no lo agrega
+                    for(int i2=0;i2<Rz.Izquierda.Primeros.size();i2++){
+                        if(Rz.Izquierda.Primeros.get(i2).equals(Rz.Derecha.Primeros.get(i))){
+                            //no lo agrega porque son iguales
+                        }else{Rz.Primeros.add(Rz.Derecha.Primeros.get(i));}
+                    }
+                }
+            }else{
+                for(int i=0;i<Rz.Izquierda.Primeros.size();i++){
+                    Rz.Primeros.add(Rz.Izquierda.Primeros.get(i));
+                }
+            }
+            
+        }
+        
+
+    }
 
     public void GraficarArbol(int Cantidad) throws IOException{
         
@@ -176,8 +240,21 @@ public class Arbol {
         }
         
         //Fin de errores Graphviz
-        
-        this.CadenaImprimir += "\"" + nodoraiz.No  + "\"" + "[label =\"<C0>|{<C1>"+nodoraiz.Anulable+"|" +Titulo+": "+Escape+ tem2 + "}|<C2>\"]; \n";
+        //concatenacion de primeros
+        String L_Primeros="";
+        L_Primeros+=nodoraiz.Primeros.get(0);
+        for(int i=1;i<nodoraiz.Primeros.size();i++){
+            L_Primeros+=" ,"+nodoraiz.Primeros.get(i);
+            
+        }
+        String L_Ultimos="";
+        L_Ultimos+=nodoraiz.Ultimos.get(0);
+        for(int i=1;i<nodoraiz.Ultimos.size();i++){
+            L_Ultimos+=" ,"+nodoraiz.Ultimos.get(i);
+            
+        }
+        //fin de concatenacion de primeros 
+        this.CadenaImprimir += "\"" + nodoraiz.No  + "\"" + "[label =\"<C0>|P:"+L_Primeros+"|{<C1>"+nodoraiz.Anulable+"|" +Titulo+": "+Escape+ tem2 + "}|U:"+L_Ultimos+"|<C2>\"]; \n";
 
         if(nodoraiz.Izquierda !=null ){
             this.DatosArbol(nodoraiz.Izquierda);

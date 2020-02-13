@@ -1,36 +1,36 @@
 digraph ARBOL { 
 rankdir=TB
 node[shape=record,style=filled] 
-"0"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
-"2"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
-"4"[label ="<C0>|{<C1>No Anulable|Operador: \+}|<C2>"]; 
-"5"[label ="<C0>|{<C1>No Anulable|Conjunto: digito}|<C2>"]; 
+"0"[label ="<C0>|P:|{<C1>No Anulable|Operador: \.}|U:|<C2>"]; 
+"2"[label ="<C0>|P:|{<C1>No Anulable|Operador: \.}|U:|<C2>"]; 
+"4"[label ="<C0>|P:|{<C1>No Anulable|Operador: \+}|U:|<C2>"]; 
+"5"[label ="<C0>|P:|{<C1>No Anulable|Conjunto: digito}|U:|<C2>"]; 
 "4":C0->"5"; 
 "2":C0->"4"; 
-"6"[label ="<C0>|{<C1>No Anulable|Operador: \+}|<C2>"]; 
-"7"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
-"8"[label ="<C0>|{<C1>No Anulable|Operador: \|}|<C2>"]; 
-"9"[label ="<C0>|{<C1>No Anulable|Cadena: \+}|<C2>"]; 
+"6"[label ="<C0>|P:|{<C1>No Anulable|Operador: \+}|U:|<C2>"]; 
+"7"[label ="<C0>|P:|{<C1>No Anulable|Operador: \.}|U:|<C2>"]; 
+"8"[label ="<C0>|P:|{<C1>No Anulable|Operador: \|}|U:|<C2>"]; 
+"9"[label ="<C0>|P:|{<C1>No Anulable|Cadena: \+}|U:|<C2>"]; 
 "8":C0->"9"; 
-"10"[label ="<C0>|{<C1>No Anulable|Operador: \|}|<C2>"]; 
-"11"[label ="<C0>|{<C1>No Anulable|Cadena: \-}|<C2>"]; 
+"10"[label ="<C0>|P:|{<C1>No Anulable|Operador: \|}|U:|<C2>"]; 
+"11"[label ="<C0>|P:|{<C1>No Anulable|Cadena: \-}|U:|<C2>"]; 
 "10":C0->"11"; 
-"12"[label ="<C0>|{<C1>No Anulable|Operador: \|}|<C2>"]; 
-"13"[label ="<C0>|{<C1>No Anulable|Cadena: \*}|<C2>"]; 
+"12"[label ="<C0>|P:|{<C1>No Anulable|Operador: \|}|U:|<C2>"]; 
+"13"[label ="<C0>|P:|{<C1>No Anulable|Cadena: \*}|U:|<C2>"]; 
 "12":C0->"13"; 
-"14"[label ="<C0>|{<C1>No Anulable|Cadena: \/}|<C2>"]; 
+"14"[label ="<C0>|P:|{<C1>No Anulable|Cadena: \/}|U:|<C2>"]; 
 "12":C2->"14"; 
 "10":C2->"12"; 
 "8":C2->"10"; 
 "7":C0->"8"; 
-"15"[label ="<C0>|{<C1>No Anulable|Operador: \+}|<C2>"]; 
-"16"[label ="<C0>|{<C1>No Anulable|Conjunto: digito}|<C2>"]; 
+"15"[label ="<C0>|P:|{<C1>No Anulable|Operador: \+}|U:|<C2>"]; 
+"16"[label ="<C0>|P:|{<C1>No Anulable|Conjunto: digito}|U:|<C2>"]; 
 "15":C0->"16"; 
 "7":C2->"15"; 
 "6":C0->"7"; 
 "2":C2->"6"; 
 "0":C0->"2"; 
-"1"[label ="<C0>|{<C1>No Anulable|Operador: \#}|<C2>"]; 
+"1"[label ="<C0>|P:|{<C1>No Anulable|Operador: \#}|U:|<C2>"]; 
 "0":C2->"1"; 
 
 }
