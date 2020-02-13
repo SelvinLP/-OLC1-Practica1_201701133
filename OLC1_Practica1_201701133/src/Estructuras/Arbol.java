@@ -14,6 +14,7 @@ import java.util.LinkedList;
  * @author Aragon Perez
  */
 class Nodo_Arbol{
+    public int No;
     public String Indentificador;
     public String Anulable;
     public LinkedList Primeros;
@@ -21,56 +22,123 @@ class Nodo_Arbol{
     public Nodo_Arbol Izquierda;
     public Nodo_Arbol Derecha;
 
-    public Nodo_Arbol(String Id) {
+    public Nodo_Arbol(int no,String Id) {
+        this.No=no;
         this.Indentificador=Id;
     }
     
 }
 public class Arbol {
+    public ArrayList<String> Tokens; 
     Nodo_Arbol Raiz;
     public String CadenaImprimir="";
     public Arbol() {
         Raiz=null;
+        Tokens=new ArrayList<>();
     }
-    public void Insertar_Arbol_Simple(String Dato1,String operador){
-        Nodo_Arbol nuevo=new Nodo_Arbol(operador);
-        Nodo_Arbol dato1=new Nodo_Arbol(Dato1);
-        nuevo.Derecha=dato1;
-        nuevo.Izquierda=this.Raiz;
-        this.Raiz=nuevo;
+    public void InsertarArraList(int no,String Dato){
         
+        Tokens.add(Dato);
+    }
+    public void AnalisarArbol() throws IOException{
+        Raiz=new Nodo_Arbol(0,".");
+        Raiz.Derecha=new Nodo_Arbol(1,"#");
+        Raiz.Izquierda=new Nodo_Arbol(2,Tokens.get(0));
+        //recorremos la lista
+        for(int i=1;i<Tokens.size();i++){
+            Nodo_Arbol nuevo=new Nodo_Arbol(i+3,Tokens.get(i));
+            Insertar_Arbol(false,Raiz,nuevo);
+            
+        }
+        RecorridoAnulables(Raiz);
+    }
+    public boolean Insertar_Arbol(Boolean bandera,Nodo_Arbol Rz,Nodo_Arbol nuevo){
+        
+
+        if(Rz.Izquierda !=null ){
+            bandera=Insertar_Arbol(bandera, Rz.Izquierda, nuevo);
+        }
+        if(!bandera){
+            //miramos si se debe insertar porque si sigue cadena ya no puede tener hijos
+            if(Rz.Indentificador.equals("+") || Rz.Indentificador.equals("*") || Rz.Indentificador.equals("|") || Rz.Indentificador.equals("?") || Rz.Indentificador.equals(".")){
+                //comprobamos si es nodo final hio
+                if(Rz.Izquierda==null && Rz.Derecha==null){
+                    Rz.Izquierda=nuevo;
+                    bandera=true;
+                }else if((Rz.Indentificador.equals("+") || Rz.Indentificador.equals("*") ||Rz.Indentificador.equals("?")) && Rz.Izquierda==null ){
+                    //insertamos izquierda
+                    Rz.Izquierda=nuevo;
+                    bandera=true;
+                }else if(Rz.Indentificador.equals("|") || Rz.Indentificador.equals(".")){
+                    if(Rz.Izquierda!=null && Rz.Derecha==null){
+                        //insertamos derecha
+                        Rz.Derecha=nuevo;
+                        bandera=true;
+                    }
+                }
+            }
+
+        }
+        if(Rz.Derecha !=null ){
+            bandera=Insertar_Arbol(bandera, Rz.Derecha, nuevo);
+        }
+        return bandera;
     }    
-    public void Insertar_Arbol_Doble(String Dato1,String Dato2,String operador){
-        Nodo_Arbol dato2=new Nodo_Arbol(Dato2);
-        Nodo_Arbol nuevo=new Nodo_Arbol(operador);
-        Nodo_Arbol dato1=new Nodo_Arbol(Dato1);
-        nuevo.Derecha=dato2;
-        nuevo.Izquierda=dato1;
-        this.Raiz=nuevo;
-        
+    
+    public void RecorridoAnulables(Nodo_Arbol Rz){
+        if(Rz.Izquierda !=null ){
+            RecorridoAnulables(Rz.Izquierda);
+        }
+        if(Rz.Derecha !=null ){
+            RecorridoAnulables(Rz.Derecha);
+        }
+        //validacion de anulables
+        if(Rz.Izquierda==null && Rz.Derecha==null){
+            Rz.Anulable="No Anulable";
+        }
+        if((Rz.Izquierda!=null && Rz.Derecha==null)){
+            if(Rz.Indentificador.equals("*")||Rz.Indentificador.equals("?")){
+                Rz.Anulable="Anulable";
+            }
+            if(Rz.Indentificador.equals("+")){
+                Rz.Anulable=Rz.Izquierda.Anulable;
+            }
+        }
+        if((Rz.Izquierda!=null && Rz.Derecha!=null)){
+            if(Rz.Indentificador.equals("|")){
+                if(Rz.Izquierda.Anulable.equals("Anulable") || Rz.Derecha.Anulable.equals("Anulable")){
+                    Rz.Anulable="Anulable";
+                }else{
+                    Rz.Anulable="No Anulable";
+                }
+            }
+            if(Rz.Indentificador.equals(".")){
+                if(Rz.Izquierda.Anulable.equals("Anulable") && Rz.Derecha.Anulable.equals("Anulable")){
+                    Rz.Anulable="Anulable";
+                }else{
+                    Rz.Anulable="No Anulable";
+                }
+            }
+        }
     }
-    public void Insertar_Arbol_Unica(String operador){
-        Nodo_Arbol nuevo=new Nodo_Arbol(operador);
-        nuevo.Izquierda=this.Raiz;
-        this.Raiz=nuevo;
+
+    public void GraficarArbol(int Cantidad) throws IOException{
         
-    }
-    public void GraficarArbol() throws IOException{
-        
-        String ruta = "Arbol.dot";
+        String ruta = "Arbol"+Cantidad+".dot";
         File archivo = new File(ruta);
         BufferedWriter Lect;
         Lect = new BufferedWriter(new FileWriter(archivo));
         this.CadenaImprimir = "digraph ARBOL { " + '\n';
         this.CadenaImprimir += "rankdir=TB" + '\n';
         this.CadenaImprimir += "node[shape=record,style=filled] " + '\n';
-
-        this.CadenaImprimir += '\n' + "}";
         DatosArbol(Raiz);
+        this.CadenaImprimir += '\n' + "}";
+        
+        
         Lect.write(this.CadenaImprimir);
         Lect.close();
         try {
-            String cmd = "dot -Tpng Arbol.dot -o Arbol.png"; 
+            String cmd = "dot -Tpng Arbol"+Cantidad+".dot -o Arbol"+Cantidad+".png"; 
             Runtime.getRuntime().exec(cmd); 
             
         }catch (IOException ioe) {
@@ -81,15 +149,44 @@ public class Arbol {
     }
     
     public void DatosArbol(Nodo_Arbol nodoraiz){
-        this.CadenaImprimir += "\"" + nodoraiz.Indentificador  + "\"" + "[label =\"<C0>|<C1>" + "Nombre: " + nodoraiz.Indentificador + "|<C2>\"]; \n";
+        String Titulo;
+        String Escape="";
+        //validaciones para quitar errores de latex
+        char Caracter=nodoraiz.Indentificador.charAt(0);
+        if(Caracter == (char) 34){
+            Titulo="Cadena";
+        }else if(Caracter == (char) 123){
+            Titulo="Conjunto";
+        }else{
+            Titulo="Operador";
+        }
+        String tem=nodoraiz.Indentificador.replaceAll("\"", "");
+        String tem2="";
+        for(int i=0;i<tem.length();i++){
+            if(tem.charAt(i)==(char)123    ||tem.charAt(i)==(char)125){
+            }else{tem2+=tem.charAt(i);}
+        }
+        Escape="";
+        for(int i=0;i<tem2.length();i++){
+            if(Character.isDigit(tem2.charAt(i)) ||Character.isLetter(tem2.charAt(i)) ||tem2.charAt(i)==(char)32){
+            }else{
+                Escape="\\";
+                break;
+            }
+        }
+        
+        //Fin de errores Graphviz
+        
+        this.CadenaImprimir += "\"" + nodoraiz.No  + "\"" + "[label =\"<C0>|{<C1>"+nodoraiz.Anulable+"|" +Titulo+": "+Escape+ tem2 + "}|<C2>\"]; \n";
 
         if(nodoraiz.Izquierda !=null ){
             this.DatosArbol(nodoraiz.Izquierda);
-            this.CadenaImprimir += "\""+ nodoraiz.Indentificador +"\":C0->"+"\""+nodoraiz.Izquierda.Indentificador+"\"; \n";
+            this.CadenaImprimir += "\""+ nodoraiz.No  +"\":C0->"+"\""+nodoraiz.Izquierda.No+"\"; \n";
         }
+        
         if(nodoraiz.Derecha !=null ){
             this.DatosArbol(nodoraiz.Derecha);
-            this.CadenaImprimir += "\""+ nodoraiz.Indentificador +"\":C2->"+"\""+nodoraiz.Derecha.Indentificador+"\"; \n";
+            this.CadenaImprimir += "\""+ nodoraiz.No  +"\":C2->"+"\""+nodoraiz.Derecha.No+"\"; \n";
         }
     }
     

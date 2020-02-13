@@ -21,6 +21,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class F_Principal extends javax.swing.JFrame {
     //Variables de Archivo
     public String Ruta;
+    int CantidadImagenes;
     //Declaracion de Listas
     ArrayList<Lista_Tokens> L_Tokens;
     ArrayList<Lista_Tokens> L_Tokens_Error;
@@ -34,7 +35,7 @@ public class F_Principal extends javax.swing.JFrame {
         this.L_Tokens_ER=new ArrayList<>();
         this.L_Tokens_Conj=new ArrayList<>();
         this.L_Tokens_Lex=new ArrayList<>();
-        
+        CantidadImagenes=0;
         
         initComponents();
     }
@@ -318,12 +319,30 @@ public class F_Principal extends javax.swing.JFrame {
         L_Tokens_ER.clear();
         L_Tokens_Conj.clear();
         L_Tokens_Lex.clear();
+        CantidadImagenes=0;
         Scanner();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Evento de Expresiones Regulares
         Mini_Parser();
+        //Mandamos a Guardar Tokens en el Arbol
+        for(int i=0;i<L_Tokens_ER.size();i++){
+            Arbol Ab=new Arbol();
+            for(int x=0;x<L_Tokens_ER.get(i).getER().size();x++){
+                Ab.InsertarArraList(x,(String) L_Tokens_ER.get(i).getER().get(x));
+            }
+            try {
+                //Pedimos Analisar arbol
+                Ab.AnalisarArbol();
+                Ab.GraficarArbol(CantidadImagenes);
+                CantidadImagenes++;
+            } catch (IOException ex) {
+                Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
 //        System.out.println("CONJUNTOS");
 //        for(int i=0;i<L_Tokens_Conj.size();i++){
 //            System.out.println(L_Tokens_Conj.get(i).getNombre()+"    | ---------- |    "+L_Tokens_Conj.get(i).getContenido());

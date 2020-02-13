@@ -1,0 +1,28 @@
+digraph ARBOL { 
+rankdir=TB
+node[shape=record,style=filled] 
+"0"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
+"2"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
+"4"[label ="<C0>|{<C1>No Anulable|Operador: \+}|<C2>"]; 
+"5"[label ="<C0>|{<C1>No Anulable|Conjunto: abecedario}|<C2>"]; 
+"4":C0->"5"; 
+"2":C0->"4"; 
+"6"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
+"7"[label ="<C0>|{<C1>No Anulable|Conjunto: conjnum}|<C2>"]; 
+"6":C0->"7"; 
+"8"[label ="<C0>|{<C1>Anulable|Operador: \?}|<C2>"]; 
+"9"[label ="<C0>|{<C1>No Anulable|Operador: \.}|<C2>"]; 
+"10"[label ="<C0>|{<C1>No Anulable|Cadena: \:}|<C2>"]; 
+"9":C0->"10"; 
+"11"[label ="<C0>|{<C1>No Anulable|Operador: \+}|<C2>"]; 
+"12"[label ="<C0>|{<C1>No Anulable|Conjunto: abecedario}|<C2>"]; 
+"11":C0->"12"; 
+"9":C2->"11"; 
+"8":C0->"9"; 
+"6":C2->"8"; 
+"2":C2->"6"; 
+"0":C0->"2"; 
+"1"[label ="<C0>|{<C1>No Anulable|Operador: \#}|<C2>"]; 
+"0":C2->"1"; 
+
+}
