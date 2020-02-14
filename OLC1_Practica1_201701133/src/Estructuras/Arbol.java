@@ -32,8 +32,11 @@ class Nodo_Arbol{
     
 }
 public class Arbol {
+    //no tocar
     public String NOMBRE_EXPRESIONREGULAR;
     int CantNodos;
+    //para titulos de tabla de transiciones
+    public String TitulosTablaTransiciones="";
     //listas para guardar valores como tablas o para insertar
     ArrayList<Lista_Siguientes> L_Siguientes;
     public ArrayList<String> Tokens; 
@@ -155,6 +158,13 @@ public class Arbol {
             L_Siguientes.add(new Lista_Siguientes(Rz.Indentificador, CantNodos));
             Rz.Id_Hoja=CantNodos;
             CantNodos++;
+            //NO TOCAR Agregamos titulos para la trabla de transiciones 
+            if(Rz.Indentificador.equals("#")){
+                //No lo agrega al encabezado
+            }else{
+                TitulosTablaTransiciones+="<td><b>"+Rz.Indentificador+"</b></td>";
+            }
+            
         }
         //Operadores
         if(Rz.Indentificador.equals("*") || Rz.Indentificador.equals("+") || Rz.Indentificador.equals("?")){
@@ -286,7 +296,7 @@ public class Arbol {
     public void GraficarSiguientes(int CantidadHTML){
         String Nombre=NOMBRE_EXPRESIONREGULAR;
         
-        String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'>"+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
+        String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'> Tabla Siguientes: "+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
 
         CadenaImprimir+=" <tr><td><b>Nombre de Hoja</b></td><td><b>Id de Hoja</b></td><td><b>Siguientes</b></td></tr>"+'\n';
         for(int i=0;i<L_Siguientes.size();i++){
@@ -317,13 +327,45 @@ public class Arbol {
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        try {
+//
+//            Runtime.getRuntime().exec("cmd /C Reporte_Siguientes"+CantidadHTML+".html");  
+//            
+//        }catch (IOException ioe) {
+//            //en caso de error
+//            System.out.println (ioe);
+//        }
+    }
+    
+    public void TablaEstados(){
+        
+    }
+    
+    public void GraicarTablaEstados(int CantidadHTML){
+        String Nombre=NOMBRE_EXPRESIONREGULAR;
+        
+        String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'> Tabla Transiciones: "+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
+        //Escribimos titulos
+        CadenaImprimir+=" <tr><td><b>Estado</b></td><td><b>Terminales</b></td></tr>"+'\n';
+        //imprimimos 
+        CadenaImprimir+="<tr><td><b>  </b></td>";
+        CadenaImprimir+=TitulosTablaTransiciones;
+        CadenaImprimir+="</tr>"+'\n';
+        
+        CadenaImprimir+="</table></body></html>";
+        
+        String ruta = "Reporte_Transiciones"+CantidadHTML+".html";
+        File archivo = new File(ruta);
         try {
-
-            Runtime.getRuntime().exec("cmd /C Reporte_Siguientes"+CantidadHTML+".html");  
-            
-        }catch (IOException ioe) {
-            //en caso de error
-            System.out.println (ioe);
+            if (!archivo.exists()) {
+                archivo.createNewFile();
+            }
+            FileWriter Fw = new FileWriter(archivo);
+            BufferedWriter Bw = new BufferedWriter(Fw);
+            Bw.write(CadenaImprimir);
+            Bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
