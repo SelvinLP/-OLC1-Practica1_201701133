@@ -15,6 +15,7 @@ import java.util.LinkedList;
  */
 class Nodo_Arbol{
     public int No;
+    public int Id_Hoja;
     public String Indentificador;
     public String Anulable;
     public ArrayList<Integer> Primeros;
@@ -31,17 +32,22 @@ class Nodo_Arbol{
     
 }
 public class Arbol {
+    public String NOMBRE_EXPRESIONREGULAR;
     int CantNodos;
+    //listas para guardar valores como tablas o para insertar
+    ArrayList<Lista_Siguientes> L_Siguientes;
     public ArrayList<String> Tokens; 
+    //Nodo raiz arbol
     Nodo_Arbol Raiz;
+    //Cadena para graficar
     public String CadenaImprimir="";
     public Arbol() {
         Raiz=null;
         Tokens=new ArrayList<>();
+        L_Siguientes=new ArrayList<>();
         CantNodos=1;
     }
-    public void InsertarArraList(int no,String Dato){
-        
+    public void InsertarArraList(String Dato){
         Tokens.add(Dato);
     }
     public void AnalisarArbol() throws IOException{
@@ -58,6 +64,10 @@ public class Arbol {
         RecorridoPrimeros(Raiz);
         CantNodos=1;
         RecorridoUltimos(Raiz);
+        RecorridoSiguientes(Raiz);
+        
+        CantNodos=1;
+
     }
     public boolean Insertar_Arbol(Boolean bandera,Nodo_Arbol Rz,Nodo_Arbol nuevo){
         
@@ -102,6 +112,7 @@ public class Arbol {
         //validacion de anulables
         if(Rz.Izquierda==null && Rz.Derecha==null){
             Rz.Anulable="No Anulable";
+            
         }
         if((Rz.Izquierda!=null && Rz.Derecha==null)){
             if(Rz.Indentificador.equals("*")||Rz.Indentificador.equals("?")){
@@ -140,6 +151,9 @@ public class Arbol {
         //Hojas
         if(Rz.Izquierda==null && Rz.Derecha==null){
             Rz.Primeros.add(CantNodos);
+            //Insertamos a la tabla de siguientes para identificar los nodos hijos
+            L_Siguientes.add(new Lista_Siguientes(Rz.Indentificador, CantNodos));
+            Rz.Id_Hoja=CantNodos;
             CantNodos++;
         }
         //Operadores
@@ -234,6 +248,85 @@ public class Arbol {
         //fin de validaciones
     }
 
+    public void RecorridoSiguientes(Nodo_Arbol Rz){
+        if(Rz.Izquierda !=null ){
+            RecorridoSiguientes(Rz.Izquierda);
+        }
+        //comprobamos si a este nodo se le esta sacando siguientes o si pasa al otro
+        if(Rz.Derecha !=null ){
+            RecorridoSiguientes(Rz.Derecha);
+        }
+        //Validacion de Siguientes
+        //agregamos siguientes
+        if(Rz.Indentificador.equals(".")){
+            //ultimos de c1 sus siguientes son los primeros de c2
+            for(int i=0;i<Rz.Izquierda.Ultimos.size();i++){
+                for(int i2=0;i2<Rz.Derecha.Primeros.size();i2++){
+                    //posicion del valor
+                    int valor=Rz.Izquierda.Ultimos.get(i);
+                    valor--;
+                    L_Siguientes.get(valor).setValor(Rz.Derecha.Primeros.get(i2));
+                }
+            }
+        }
+        if(Rz.Indentificador.equals("+") || Rz.Indentificador.equals("*")){
+            for(int i=0;i<Rz.Izquierda.Ultimos.size();i++){
+                //ultimos de c1 sus siguientes son los primeros de c1
+                for(int i2=0;i2<Rz.Izquierda.Primeros.size();i2++){
+                    //posicion del valor
+                    int valor=Rz.Izquierda.Ultimos.get(i);
+                    L_Siguientes.get(valor-1).setValor(Rz.Izquierda.Primeros.get(i2));
+                }
+            }
+        }
+        
+
+    }
+    
+    public void GraficarSiguientes(int CantidadHTML){
+        String Nombre=NOMBRE_EXPRESIONREGULAR;
+        
+        String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'>"+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
+
+        CadenaImprimir+=" <tr><td><b>Nombre de Hoja</b></td><td><b>Id de Hoja</b></td><td><b>Siguientes</b></td></tr>"+'\n';
+        for(int i=0;i<L_Siguientes.size();i++){
+            //concatenacion de siguientes
+            String sig="";
+            for(int x=0;x<L_Siguientes.get(i).Siguientes.size();x++){
+                if(x==0){
+                    sig+=L_Siguientes.get(i).Siguientes.get(x);
+                }else{
+                    sig+=","+L_Siguientes.get(i).Siguientes.get(x);
+                }
+            }
+            CadenaImprimir+="<tr><td>"+L_Siguientes.get(i).getNombre()+"</td>"+"<td>"+L_Siguientes.get(i).getNumeroNodo()+"</td>"+"<td>"+sig+"</tr>"+'\n';
+        }
+
+        CadenaImprimir+="</table></body></html>";
+        
+        String ruta = "Reporte_Siguientes"+CantidadHTML+".html";
+        File archivo = new File(ruta);
+        try {
+            if (!archivo.exists()) {
+                archivo.createNewFile();
+            }
+            FileWriter Fw = new FileWriter(archivo);
+            BufferedWriter Bw = new BufferedWriter(Fw);
+            Bw.write(CadenaImprimir);
+            Bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+
+            Runtime.getRuntime().exec("cmd /C Reporte_Siguientes"+CantidadHTML+".html");  
+            
+        }catch (IOException ioe) {
+            //en caso de error
+            System.out.println (ioe);
+        }
+    }
+    
     public void GraficarArbol(int Cantidad) throws IOException{
         
         String ruta = "Arbol"+Cantidad+".dot";

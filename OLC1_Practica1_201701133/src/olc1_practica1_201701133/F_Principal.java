@@ -330,12 +330,14 @@ public class F_Principal extends javax.swing.JFrame {
         for(int i=0;i<L_Tokens_ER.size();i++){
             Arbol Ab=new Arbol();
             for(int x=0;x<L_Tokens_ER.get(i).getER().size();x++){
-                Ab.InsertarArraList(x,(String) L_Tokens_ER.get(i).getER().get(x));
+                Ab.InsertarArraList((String) L_Tokens_ER.get(i).getER().get(x));
             }
             try {
                 //Pedimos Analisar arbol
+                Ab.NOMBRE_EXPRESIONREGULAR=L_Tokens_ER.get(i).getNombre();
                 Ab.AnalisarArbol();
                 Ab.GraficarArbol(CantidadImagenes);
+                Ab.GraficarSiguientes(CantidadImagenes);
                 CantidadImagenes++;
             } catch (IOException ex) {
                 Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
