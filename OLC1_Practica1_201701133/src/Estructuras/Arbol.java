@@ -31,12 +31,14 @@ class Nodo_Arbol{
     
 }
 public class Arbol {
+    int CantNodos;
     public ArrayList<String> Tokens; 
     Nodo_Arbol Raiz;
     public String CadenaImprimir="";
     public Arbol() {
         Raiz=null;
         Tokens=new ArrayList<>();
+        CantNodos=1;
     }
     public void InsertarArraList(int no,String Dato){
         
@@ -53,7 +55,9 @@ public class Arbol {
             
         }
         RecorridoAnulables(Raiz);
-        RecorridoPrimeros(Raiz, 1);
+        RecorridoPrimeros(Raiz);
+        CantNodos=1;
+        RecorridoUltimos(Raiz);
     }
     public boolean Insertar_Arbol(Boolean bandera,Nodo_Arbol Rz,Nodo_Arbol nuevo){
         
@@ -125,18 +129,18 @@ public class Arbol {
         }
     }
     
-    public void RecorridoPrimeros(Nodo_Arbol Rz,int CantidadHojas){
+    public void RecorridoPrimeros(Nodo_Arbol Rz){
         if(Rz.Izquierda !=null ){
-            RecorridoAnulables(Rz.Izquierda);
+            RecorridoPrimeros(Rz.Izquierda);
         }
         if(Rz.Derecha !=null ){
-            RecorridoAnulables(Rz.Derecha);
+            RecorridoPrimeros(Rz.Derecha);
         }
         //Validacion de Primeros
         //Hojas
         if(Rz.Izquierda==null && Rz.Derecha==null){
-            Rz.Primeros.add(CantidadHojas);
-            CantidadHojas++;
+            Rz.Primeros.add(CantNodos);
+            CantNodos++;
         }
         //Operadores
         if(Rz.Indentificador.equals("*") || Rz.Indentificador.equals("+") || Rz.Indentificador.equals("?")){
@@ -152,11 +156,7 @@ public class Arbol {
             //Mas Derecha
             for(int i=0;i<Rz.Derecha.Primeros.size();i++){
                 //validacion si existe sino no lo agrega
-                for(int i2=0;i2<Rz.Izquierda.Primeros.size();i2++){
-                    if(Rz.Izquierda.Primeros.get(i2).equals(Rz.Derecha.Primeros.get(i))){
-                        //no lo agrega porque son iguales
-                    }else{Rz.Primeros.add(Rz.Derecha.Primeros.get(i));}
-                }
+                Rz.Primeros.add(Rz.Derecha.Primeros.get(i));
             }
         }
         if(Rz.Indentificador.equals(".")){
@@ -169,11 +169,8 @@ public class Arbol {
                 //Mas Derecha
                 for(int i=0;i<Rz.Derecha.Primeros.size();i++){
                     //validacion si existe sino no lo agrega
-                    for(int i2=0;i2<Rz.Izquierda.Primeros.size();i2++){
-                        if(Rz.Izquierda.Primeros.get(i2).equals(Rz.Derecha.Primeros.get(i))){
-                            //no lo agrega porque son iguales
-                        }else{Rz.Primeros.add(Rz.Derecha.Primeros.get(i));}
-                    }
+                    Rz.Primeros.add(Rz.Derecha.Primeros.get(i));
+                    
                 }
             }else{
                 for(int i=0;i<Rz.Izquierda.Primeros.size();i++){
@@ -184,6 +181,57 @@ public class Arbol {
         }
         
 
+    }
+    
+    public void RecorridoUltimos(Nodo_Arbol Rz){
+        if(Rz.Izquierda !=null ){
+            RecorridoUltimos(Rz.Izquierda);
+        }
+        if(Rz.Derecha !=null ){
+            RecorridoUltimos(Rz.Derecha);
+        }
+        //Validacion de Primeros
+        //Hojas
+        if(Rz.Izquierda==null && Rz.Derecha==null){
+            Rz.Ultimos.add(CantNodos);
+            CantNodos++;
+        }
+        //Operadores
+        if(Rz.Indentificador.equals("*") || Rz.Indentificador.equals("+") || Rz.Indentificador.equals("?")){
+            for(int i=0;i<Rz.Izquierda.Ultimos.size();i++){
+                Rz.Ultimos.add(Rz.Izquierda.Ultimos.get(i));
+            }
+        }
+        if(Rz.Indentificador.equals("|")){
+            //Izquierda 
+            for(int i=0;i<Rz.Izquierda.Ultimos.size();i++){
+                Rz.Ultimos.add(Rz.Izquierda.Ultimos.get(i));
+            }
+            //Mas Derecha
+            for(int i=0;i<Rz.Derecha.Ultimos.size();i++){
+                //validacion si existe sino no lo agrega
+                Rz.Ultimos.add(Rz.Derecha.Ultimos.get(i));
+            }
+        }if(Rz.Indentificador.equals(".")){
+            if(Rz.Derecha.Anulable.equals("Anulable")){
+                //se agregan los dos
+                //Izquierda 
+                for(int i=0;i<Rz.Izquierda.Ultimos.size();i++){
+                    Rz.Ultimos.add(Rz.Izquierda.Ultimos.get(i));
+                }
+                //Mas Derecha
+                for(int i=0;i<Rz.Derecha.Ultimos.size();i++){
+                    //validacion si existe sino no lo agrega
+                    Rz.Ultimos.add(Rz.Derecha.Ultimos.get(i));
+                }
+            }else{
+                for(int i=0;i<Rz.Derecha.Ultimos.size();i++){
+                    Rz.Ultimos.add(Rz.Derecha.Ultimos.get(i));
+                }
+            }
+            
+        }
+        //fin de validaciones
     }
 
     public void GraficarArbol(int Cantidad) throws IOException{
@@ -215,7 +263,7 @@ public class Arbol {
     public void DatosArbol(Nodo_Arbol nodoraiz){
         String Titulo;
         String Escape="";
-        //validaciones para quitar errores de latex
+        //validaciones para quitar errores de graphviz
         char Caracter=nodoraiz.Indentificador.charAt(0);
         if(Caracter == (char) 34){
             Titulo="Cadena";
@@ -254,7 +302,7 @@ public class Arbol {
             
         }
         //fin de concatenacion de primeros 
-        this.CadenaImprimir += "\"" + nodoraiz.No  + "\"" + "[label =\"<C0>|P:"+L_Primeros+"|{<C1>"+nodoraiz.Anulable+"|" +Titulo+": "+Escape+ tem2 + "}|U:"+L_Ultimos+"|<C2>\"]; \n";
+        this.CadenaImprimir += "\"" + nodoraiz.No  + "\"" + "[label =\"<C0>|P: "+L_Primeros+"|{<C1>"+nodoraiz.Anulable+"|" +Titulo+": "+Escape+ tem2 + "}|U: "+L_Ultimos+"|<C2>\"]; \n";
 
         if(nodoraiz.Izquierda !=null ){
             this.DatosArbol(nodoraiz.Izquierda);
