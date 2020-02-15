@@ -80,6 +80,7 @@ public class Arbol {
         CantNodos=1;
 
     }
+    
     public boolean Insertar_Arbol(Boolean bandera,Nodo_Arbol Rz,Nodo_Arbol nuevo){
         
 
@@ -347,6 +348,7 @@ public class Arbol {
     
     public void TablaEstados(){
         int fila=1;
+        
         //Eliminacion de repetidos de los encaezados
         Set<String> hashSet2 = new HashSet<String>(NodoHijos);
         NodoHijos.clear();
@@ -365,7 +367,12 @@ public class Arbol {
         Lista_TablaTransiciones nuevo=new Lista_TablaTransiciones("S"+CantidadEstados);
         for(int x=0;x<Raiz.Primeros.size();x++){
             nuevo.setIdEstado(Raiz.Primeros.get(x));
-            s+=","+Raiz.Primeros.get(x);
+            if(x==0){
+                s+=Raiz.Primeros.get(x);
+            }else{
+                s+=","+Raiz.Primeros.get(x);
+            }
+            
         }
         Collections.sort(nuevo.IdEstado);
         s+="}";
@@ -399,7 +406,12 @@ public class Arbol {
                     for(int x3=0;x3<L_Siguientes.get(posicionPrimeros-1).Siguientes.size();x3++){
                         //Inseerto los siguientes
                         nuevo2.setIdEstado(L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3));
-                        Conc+=","+L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3);
+                        if(x3==0){
+                            Conc+=L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3);
+                        }else{
+                            Conc+=","+L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3);
+                        }
+                        
                     }
 
                     
@@ -422,7 +434,7 @@ public class Arbol {
                            posicionrepetido=i;
                            break;
                        }
-                        System.out.println(repetido);
+                        
                     }
                     if(repetido){
                         //no se inserta porque ya existe un valor
@@ -435,7 +447,9 @@ public class Arbol {
                     }else{
                         //si viene vacio
                         if(nuevo2.IdEstado.size()==0){
+                            
                         }else{
+                            //eliminar concatenacion de estado final
                             //creacion nueva posicion tabla
                             Tabla[x+2][0]=Conc+"}";
                             //creacion de nueva transaccion tabla
@@ -472,7 +486,12 @@ public class Arbol {
         for(int x2=0;x2<CantidadEstados+1;x2++){
             CadenaImprimir+="<tr>";
             for(int x=0;x<NodoHijos.size()+1;x++){
-                CadenaImprimir+="<td><b>"+Tabla[x2][x]+"</b></td>";
+                if(Tabla[x2][x]==null){
+                    CadenaImprimir+="<td><b></b></td>";
+                }else{
+                    CadenaImprimir+="<td><b>"+Tabla[x2][x]+"</b></td>";
+                }
+                
             }
             CadenaImprimir+="</tr>"+'\n';
 
@@ -503,6 +522,7 @@ public class Arbol {
         BufferedWriter Lect;
         Lect = new BufferedWriter(new FileWriter(archivo));
         this.CadenaImprimir = "digraph AFD { " + '\n';
+        this.CadenaImprimir+="graph [label=\"AFD: "+Nombre+"\", labelloc=t, fontsize=20]; ";
         DatosGrafo();
         this.CadenaImprimir += '\n' + "}";
         
@@ -523,9 +543,53 @@ public class Arbol {
     }
     
     public void DatosGrafo(){
+        CadenaImprimir+="rankdir=LR;";
+        CadenaImprimir+="edge [color=blue];";
+        CadenaImprimir+="node [color = mediumseagreen];";
         for(int i=0;i<L_Transiciones.size();i++){
-            CadenaImprimir+="\""+L_Transiciones.get(i).getNombreEstado()+"\""+"[ label=1]";
+            CadenaImprimir+="\""+L_Transiciones.get(i).getNombreEstado()+"\""+"[ label="+L_Transiciones.get(i).getNombreEstado()+"]"+'\n';
         }
+        CadenaImprimir+="secret_node [style=invis];\n";
+        CadenaImprimir+="secret_node -> S0 [label=\"inicio\"];";
+        //agregamos estado de finalizacion
+        for(int z=0;z<L_Transiciones.size();z++){
+            for(int z2=0;z2<L_Transiciones.get(z).IdEstado.size();z2++){
+                if(L_Transiciones.get(z).IdEstado.get(z2)==L_Transiciones.size()+1){
+                    CadenaImprimir+=L_Transiciones.get(z).getNombreEstado()+"[peripheries=2];\n";
+                }
+            }
+        }
+        //creacion de transicions 
+       for(int x=0;x<L_Transiciones.size();x++){
+           //recorro hacia abajo en los estados
+            for(int y=0;y<NodoHijos.size();y++){
+                //recorro hacia la derecha
+                
+                if(Tabla[x+1][y+1]==null){
+                    //no hay estado de transicion
+                }else{
+                    //quitar errore de graphviz
+                    String Escape="";
+                    //validaciones para quitar errores de graphviz
+                    String tem=Tabla[0][y+1].replaceAll("\"", "");
+                    String tem2="";
+                    for(int i=0;i<tem.length();i++){
+                        if(tem.charAt(i)==(char)123    ||tem.charAt(i)==(char)125){
+                        }else{tem2+=tem.charAt(i);}
+                    }
+                    Escape="";
+                    for(int i=0;i<tem2.length();i++){
+                        if(Character.isDigit(tem2.charAt(i)) ||Character.isLetter(tem2.charAt(i)) ||tem2.charAt(i)==(char)32){
+                        }else{
+                            Escape="\\";
+                            break;
+                        }
+                    }
+                    CadenaImprimir+="\""+L_Transiciones.get(x).getNombreEstado()+"\""+"->\""+Tabla[x+1][y+1]+"\""+"[label=\""+Escape+tem2+"\"];"+'\n';
+                }
+                
+            }
+       }
     }
     
     public void GraficarArbol(int Cantidad) throws IOException{
@@ -535,6 +599,7 @@ public class Arbol {
         BufferedWriter Lect;
         Lect = new BufferedWriter(new FileWriter(archivo));
         this.CadenaImprimir = "digraph ARBOL { " + '\n';
+        this.CadenaImprimir+="graph [label=\"Arbol: "+NOMBRE_EXPRESIONREGULAR+"\", labelloc=t, fontsize=20]; ";
         this.CadenaImprimir += "rankdir=TB" + '\n';
         this.CadenaImprimir += "node[shape=record,style=filled] " + '\n';
         DatosArbol(Raiz);

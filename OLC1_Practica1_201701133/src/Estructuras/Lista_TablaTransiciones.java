@@ -45,6 +45,7 @@ public class Lista_TablaTransiciones {
     }
     public void setTransicion(String Encabezado,String Estadonuevo){
         Transicion.add(new Transiciones(Encabezado, NombreEstado));
+        //Comparacion
         Collections.sort(Transicion, new Comparator() {
                 public int compare(Transiciones p1, Transiciones p2) {
                         return new String(p1.Encabezado).compareTo(new String(p2.Encabezado));
