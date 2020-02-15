@@ -6,8 +6,8 @@
 package Estructuras;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.Set;
 
 /**
  *
@@ -35,10 +35,14 @@ public class Arbol {
     //no tocar
     public String NOMBRE_EXPRESIONREGULAR;
     int CantNodos;
-    //para titulos de tabla de transiciones
-    public String TitulosTablaTransiciones="";
+    //Para colocar el nomrbe del estado
+    int CantidadEstados=0;
     //listas para guardar valores como tablas o para insertar
+    ArrayList<String>NodoHijos;
+    //Lista de Transiciones
+    String [][] Tabla=new String[100][100];
     ArrayList<Lista_Siguientes> L_Siguientes;
+    ArrayList<Lista_TablaTransiciones> L_Transiciones;
     public ArrayList<String> Tokens; 
     //Nodo raiz arbol
     Nodo_Arbol Raiz;
@@ -48,6 +52,8 @@ public class Arbol {
         Raiz=null;
         Tokens=new ArrayList<>();
         L_Siguientes=new ArrayList<>();
+        L_Transiciones=new ArrayList<>();
+        NodoHijos=new ArrayList<>();
         CantNodos=1;
     }
     public void InsertarArraList(String Dato){
@@ -68,7 +74,9 @@ public class Arbol {
         CantNodos=1;
         RecorridoUltimos(Raiz);
         RecorridoSiguientes(Raiz);
-        
+        //validaciones para Tablade Estados
+        Collections.sort(NodoHijos);
+        TablaEstados();
         CantNodos=1;
 
     }
@@ -162,7 +170,7 @@ public class Arbol {
             if(Rz.Indentificador.equals("#")){
                 //No lo agrega al encabezado
             }else{
-                TitulosTablaTransiciones+="<td><b>"+Rz.Indentificador+"</b></td>";
+                NodoHijos.add(Rz.Indentificador);
             }
             
         }
@@ -338,19 +346,162 @@ public class Arbol {
     }
     
     public void TablaEstados(){
+        int fila=1;
+        //Eliminacion de repetidos de los encaezados
+        Set<String> hashSet2 = new HashSet<String>(NodoHijos);
+        NodoHijos.clear();
+        NodoHijos.addAll(hashSet2);
+        //inserto en matriz
+        Tabla[0][0]=" ";
+        for(int i=0;i<NodoHijos.size();i++){
+            Tabla[0][i+1]=NodoHijos.get(i);
+        }
+        
+        
+        
+        //Primera iteracion de Estados
+        String s="";
+        s+="S"+CantidadEstados+"{";
+        Lista_TablaTransiciones nuevo=new Lista_TablaTransiciones("S"+CantidadEstados);
+        for(int x=0;x<Raiz.Primeros.size();x++){
+            nuevo.setIdEstado(Raiz.Primeros.get(x));
+            s+=","+Raiz.Primeros.get(x);
+        }
+        Collections.sort(nuevo.IdEstado);
+        s+="}";
+        Tabla[1][0]=s;
+        L_Transiciones.add(nuevo);
+        CantidadEstados++;
+        
+        
+        
+        
+        //fin de primer estado
+        //para los demas estados creacion de los demas estados
+        int y=1;
+        while(y!=0){
+            y--;
+            //recorre la lista
+            for(int x=0;x<L_Transiciones.size();x++){
+                
+                
+                //Recorre los primeros
+                for(int x2=0;x2<L_Transiciones.get(x).IdEstado.size();x2++){
+                    //creamos uno nuevo por cada posicion de primeros
+                    
+                    
+                    Lista_TablaTransiciones nuevo2=new Lista_TablaTransiciones("S"+CantidadEstados);                    
+                    int posicionPrimeros=L_Transiciones.get(x).IdEstado.get(x2);
+                    String Conc="";
+                    Conc+="S"+CantidadEstados+"{";;
+                    
+                    
+                    for(int x3=0;x3<L_Siguientes.get(posicionPrimeros-1).Siguientes.size();x3++){
+                        //Inseerto los siguientes
+                        nuevo2.setIdEstado(L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3));
+                        Conc+=","+L_Siguientes.get(posicionPrimeros-1).Siguientes.get(x3);
+                    }
+
+                    
+
+                    
+                    
+                    //validaciones de la creacion
+                    //Eliminar repetidos de los primeros en los estados
+                    Set<Integer> hashSet = new HashSet<Integer>(nuevo2.IdEstado);
+                    nuevo2.IdEstado.clear();
+                    nuevo2.IdEstado.addAll(hashSet);
+                    Collections.sort(nuevo2.IdEstado);
+                    //Comparacion de si el nuevo nodo ya existe en caso de que no exista insertar
+                    boolean repetido=false;
+                    int posicionrepetido=0;
+                    for(int i=0;i<L_Transiciones.size();i++){
+                       //valores de la lista
+                       repetido = L_Transiciones.get(i).IdEstado.equals(nuevo2.IdEstado);
+                       if(repetido){
+                           posicionrepetido=i;
+                           break;
+                       }
+                        System.out.println(repetido);
+                    }
+                    if(repetido){
+                        //no se inserta porque ya existe un valor
+                        for(int i=0;i<NodoHijos.size();i++){
+                            if(NodoHijos.get(i).equals(L_Siguientes.get(posicionPrimeros-1).getNombre())){
+                                Tabla[x+1][i+1]="S"+posicionrepetido;
+                            }
+                        }
+
+                    }else{
+                        //si viene vacio
+                        if(nuevo2.IdEstado.size()==0){
+                        }else{
+                            //creacion nueva posicion tabla
+                            Tabla[x+2][0]=Conc+"}";
+                            //creacion de nueva transaccion tabla
+                            for(int i=0;i<NodoHijos.size();i++){
+                                if(NodoHijos.get(i).equals(L_Siguientes.get(posicionPrimeros-1).getNombre())){
+                                    Tabla[x+1][i+1]="S"+CantidadEstados;
+                                }
+                            }
+                            y++;
+                            L_Transiciones.add(nuevo2);
+                            CantidadEstados++;
+                            
+                        }
+                          
+                    }
+
+                }
+
+            }
+            
+            
+        }
         
     }
-    
-    public void GraicarTablaEstados(int CantidadHTML){
+
+    public void GraficarTablaEstados(int CantidadHTML){
         String Nombre=NOMBRE_EXPRESIONREGULAR;
         
         String CadenaImprimir="<html>"+ "<body>"+ "<h1 align='center'> Tabla Transiciones: "+Nombre+"</h1></br>"+ "<table cellpadding='10' border = '1' align='center'>"+'\n';
         //Escribimos titulos
         CadenaImprimir+=" <tr><td><b>Estado</b></td><td><b>Terminales</b></td></tr>"+'\n';
         //imprimimos 
-        CadenaImprimir+="<tr><td><b>  </b></td>";
-        CadenaImprimir+=TitulosTablaTransiciones;
-        CadenaImprimir+="</tr>"+'\n';
+//        CadenaImprimir+="<tr><td><b>  </b></td>";
+//        for(int i=0;i<NodoHijos.size();i++){
+//            CadenaImprimir+="<td><b>"+NodoHijos.get(i)+"</b></td>";
+//        }
+//        CadenaImprimir+="</tr>"+'\n';
+//        //Agregamos los Estados
+//        for(int x=0;x<L_Transiciones.size();x++){
+//            CadenaImprimir+="<tr><td> S"+x+":{";
+//            
+//            //recorrido de Estados
+//            for(int x2=0;x2<L_Transiciones.get(x).IdEstado.size();x2++){
+//                if(x2==0){
+//                    CadenaImprimir+=L_Transiciones.get(x).IdEstado.get(x2);
+//                }else{
+//                    CadenaImprimir+=","+L_Transiciones.get(x).IdEstado.get(x2);
+//                }
+//                
+//                
+//            }
+//            CadenaImprimir+="}</td>";
+//            //Recorrido de transiciones
+//            CadenaImprimir+="</tr>"+'\n';
+//        }
+        for(int x2=0;x2<CantidadEstados+1;x2++){
+            CadenaImprimir+="<tr>";
+            for(int x=0;x<NodoHijos.size()+1;x++){
+                CadenaImprimir+="<td><b>"+Tabla[x2][x]+"</b></td>";
+            }
+            CadenaImprimir+="</tr>"+'\n';
+
+            
+        }
+        
+        
         
         CadenaImprimir+="</table></body></html>";
         

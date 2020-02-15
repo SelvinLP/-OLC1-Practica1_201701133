@@ -6,30 +6,34 @@
 package Estructuras;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
  * @author Aragon Perez
  */
-class NodoEstado{
-    public String IdEstado="";
-    public String IdEncabezado="";
-
-    public NodoEstado(String idEst, String Encabezado) {
-        this.IdEstado=idEst;
-        this.IdEncabezado=Encabezado;
+class Transiciones{
+    public String Encabezado;
+    public String NombreEstado;
+    public Transiciones(String Encabezado,String Nombr) {
+        this.Encabezado=Encabezado;
+        this.NombreEstado=Nombr;
     }
-        
-
+    
 }
 public class Lista_TablaTransiciones {
     
     private String NombreEstado;
+    //primeros
     public ArrayList<Integer> IdEstado;
-    public ArrayList<NodoEstado> Estados;
-    public Lista_TablaTransiciones() {
+    //transiciones
+    public ArrayList<Transiciones> Transicion;
+    public Lista_TablaTransiciones(String Nombre){
+        NombreEstado=Nombre;
         IdEstado=new ArrayList<>();
-        Estados=new ArrayList<>();
+        Transicion=new ArrayList<>();
+        
     }
     public String getNombreEstado(){
         return NombreEstado;
@@ -39,9 +43,19 @@ public class Lista_TablaTransiciones {
     public void setIdEstado(int pos){
         this.IdEstado.add(pos);
     }
-    public void setTransicion(String Nm,String Enc){
-        this.Estados.add(new NodoEstado(Nm, Enc));
-        
+    public void setTransicion(String Encabezado,String Estadonuevo){
+        Transicion.add(new Transiciones(Encabezado, NombreEstado));
+        Collections.sort(Transicion, new Comparator() {
+                public int compare(Transiciones p1, Transiciones p2) {
+                        return new String(p1.Encabezado).compareTo(new String(p2.Encabezado));
+                }
+
+            @Override
+            public int compare(Object o1, Object o2) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
     }
+
     
 }
