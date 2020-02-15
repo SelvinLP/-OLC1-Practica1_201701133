@@ -339,6 +339,7 @@ public class F_Principal extends javax.swing.JFrame {
                 Ab.GraficarArbol(CantidadImagenes);
                 Ab.GraficarSiguientes(CantidadImagenes);
                 Ab.GraficarTablaEstados(CantidadImagenes);
+                Ab.GraficarGrafo(CantidadImagenes);
                 CantidadImagenes++;
             } catch (IOException ex) {
                 Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);

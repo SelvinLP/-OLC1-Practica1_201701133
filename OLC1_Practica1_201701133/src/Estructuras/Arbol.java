@@ -468,29 +468,7 @@ public class Arbol {
         //Escribimos titulos
         CadenaImprimir+=" <tr><td><b>Estado</b></td><td><b>Terminales</b></td></tr>"+'\n';
         //imprimimos 
-//        CadenaImprimir+="<tr><td><b>  </b></td>";
-//        for(int i=0;i<NodoHijos.size();i++){
-//            CadenaImprimir+="<td><b>"+NodoHijos.get(i)+"</b></td>";
-//        }
-//        CadenaImprimir+="</tr>"+'\n';
-//        //Agregamos los Estados
-//        for(int x=0;x<L_Transiciones.size();x++){
-//            CadenaImprimir+="<tr><td> S"+x+":{";
-//            
-//            //recorrido de Estados
-//            for(int x2=0;x2<L_Transiciones.get(x).IdEstado.size();x2++){
-//                if(x2==0){
-//                    CadenaImprimir+=L_Transiciones.get(x).IdEstado.get(x2);
-//                }else{
-//                    CadenaImprimir+=","+L_Transiciones.get(x).IdEstado.get(x2);
-//                }
-//                
-//                
-//            }
-//            CadenaImprimir+="}</td>";
-//            //Recorrido de transiciones
-//            CadenaImprimir+="</tr>"+'\n';
-//        }
+
         for(int x2=0;x2<CantidadEstados+1;x2++){
             CadenaImprimir+="<tr>";
             for(int x=0;x<NodoHijos.size()+1;x++){
@@ -500,9 +478,7 @@ public class Arbol {
 
             
         }
-        
-        
-        
+
         CadenaImprimir+="</table></body></html>";
         
         String ruta = "Reporte_Transiciones"+CantidadHTML+".html";
@@ -517,6 +493,38 @@ public class Arbol {
             Bw.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void GraficarGrafo(int Cantidad) throws IOException{
+        String Nombre=NOMBRE_EXPRESIONREGULAR;
+        String ruta = "AFD"+Cantidad+".dot";
+        File archivo = new File(ruta);
+        BufferedWriter Lect;
+        Lect = new BufferedWriter(new FileWriter(archivo));
+        this.CadenaImprimir = "digraph AFD { " + '\n';
+        DatosGrafo();
+        this.CadenaImprimir += '\n' + "}";
+        
+        
+        Lect.write(this.CadenaImprimir);
+        Lect.close();
+        try {
+            String cmd = "dot -Tpng AFD"+Cantidad+".dot -o AFD"+Cantidad+".png"; 
+            Runtime.getRuntime().exec(cmd); 
+            
+        }catch (IOException ioe) {
+            //en caso de error
+            System.out.println (ioe);
+        }
+        
+
+
+    }
+    
+    public void DatosGrafo(){
+        for(int i=0;i<L_Transiciones.size();i++){
+            CadenaImprimir+="\""+L_Transiciones.get(i).getNombreEstado()+"\""+"[ label=1]";
         }
     }
     
