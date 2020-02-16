@@ -7,7 +7,7 @@ graph [label="AFD: Expresion3", labelloc=t, fontsize=20]; rankdir=LR;edge [color
 "S5"[ label=S5]
 "S6"[ label=S6]
 secret_node [style=invis];
-secret_node -> S0 [label="inicio"];S4[peripheries=2];
+secret_node -> S0 [label="inicio"];S6[peripheries=2];
 "S0"->"S0"[label="abecedario"];
 "S0"->"S0"[label="\_"];
 "S0"->"S1"[label="conjnum"];

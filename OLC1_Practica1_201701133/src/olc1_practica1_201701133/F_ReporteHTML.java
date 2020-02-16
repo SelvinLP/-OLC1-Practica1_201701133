@@ -22,7 +22,6 @@ public class F_ReporteHTML extends javax.swing.JFrame {
         //agregamos la informacion al jpan
         this.jEditorPane1.setContentType("text/html");
         File InfoPNG=new File(Cadena+".html");
-        System.out.println(Cadena+".html");
         try {
             this.jEditorPane1.setPage(InfoPNG.toURI().toURL());
         } catch (Exception e) {

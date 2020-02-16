@@ -32,7 +32,9 @@ class Nodo_Arbol{
     
 }
 public class Arbol {
+    
     //no tocar
+    int maximo=0;
     public String NOMBRE_EXPRESIONREGULAR;
     int CantNodos;
     //Para colocar el nomrbe del estado
@@ -59,6 +61,7 @@ public class Arbol {
     public void InsertarArraList(String Dato){
         Tokens.add(Dato);
     }
+    
     public void AnalisarArbol() throws IOException{
         Raiz=new Nodo_Arbol(0,".");
         Raiz.Derecha=new Nodo_Arbol(1,"#");
@@ -170,6 +173,7 @@ public class Arbol {
             //NO TOCAR Agregamos titulos para la trabla de transiciones 
             if(Rz.Indentificador.equals("#")){
                 //No lo agrega al encabezado
+                maximo=Rz.Id_Hoja;
             }else{
                 NodoHijos.add(Rz.Indentificador);
             }
@@ -554,7 +558,9 @@ public class Arbol {
         //agregamos estado de finalizacion
         for(int z=0;z<L_Transiciones.size();z++){
             for(int z2=0;z2<L_Transiciones.get(z).IdEstado.size();z2++){
-                if(L_Transiciones.get(z).IdEstado.get(z2)==L_Transiciones.size()+1){
+                System.out.println("FINAL---- "+maximo);
+                if(L_Transiciones.get(z).IdEstado.get(z2)==maximo){
+                    System.out.println("Valido"+z);
                     CadenaImprimir+=L_Transiciones.get(z).getNombreEstado()+"[peripheries=2];\n";
                 }
             }
@@ -672,6 +678,137 @@ public class Arbol {
             this.DatosArbol(nodoraiz.Derecha);
             this.CadenaImprimir += "\""+ nodoraiz.No  +"\":C2->"+"\""+nodoraiz.Derecha.No+"\"; \n";
         }
+    }
+    
+    //validaciones para Lexema
+    public boolean ValidarLexema(String Lexema,ArrayList<Lista_Conjuntos> L_Conj){
+        boolean bandera=true;
+        int Estado=1;
+        for(int pos=0;pos<Lexema.length();pos++){
+            //variable para ver si inserto en cualquiera de los casos
+            int Insertado=0;
+            //1 si
+            //0 no
+
+            //validaciones
+            System.out.println("Nuevo");
+            for(int x=0;x<NodoHijos.size();x++){
+                
+                if(Tabla[Estado][x+1]==null){
+                    // No comparamos estados 
+                }else{
+                    //comparamos si pertenece o tiene una transicion a alguno de estos casos
+                    char var=Tabla[0][x+1].charAt(0);
+                    String tem=Tabla[0][x+1].replaceAll("\"", "");
+                    String Nombre="";
+                    for(int i=0;i<tem.length();i++){
+                        if(tem.charAt(i)==(char)123    ||tem.charAt(i)==(char)125){
+                        }else{Nombre+=tem.charAt(i);}
+                    }
+        
+                    //Cadena
+                    if(var == (char) 34){
+                        String cad=String.valueOf(Lexema.charAt(pos));
+                        for(int con=1;con<Nombre.length();con++){
+                            pos++;
+                            cad+=Lexema.charAt(pos);
+                        }
+                        if(cad.equals(Nombre)){
+                            System.out.println("-valido Cadena");
+                            Insertado=1;
+                            Estado=Character.getNumericValue(Tabla[Estado][x+1].charAt(1))+1; 
+                            System.out.println(Estado);
+                            break;
+                            
+                        }else{
+                            System.out.println("-No valido Cadena");
+                            pos=pos-(Nombre.length()-1);
+                            Insertado=0;
+                        }
+                    }
+                    //Conjunto
+                    if(var == (char) 123){
+                        //identificamos y obtenemos el nodo de la lista de conjuntos
+                        String Encontrado="";
+                        for(int ListC=0;ListC<L_Conj.size();ListC++){
+                            if(L_Conj.get(ListC).getNombre().equals(Nombre)){
+                                Encontrado=L_Conj.get(ListC).getContenido();
+                            }
+                        }
+                        //Luego de encontrarlo empezamos a validar
+                        //L~D
+                        if(Encontrado.charAt(1)==(char)126){
+                            int a=(int)Encontrado.charAt(0);
+                            int b=(int)Encontrado.charAt(2);
+                            int valor=(int)Lexema.charAt(pos);
+                            if(valor>=a && valor<=b){
+                                //cumple
+                                System.out.println("-valido Conjunto Rango");
+                                Insertado=1;
+                                Estado=Character.getNumericValue(Tabla[Estado][x+1].charAt(1))+1; 
+                                System.out.println(Estado);
+                                break;
+                            }else{
+                                System.out.println(Lexema.charAt(pos)+"Rango");
+                                System.out.println("-No valido Conjunto Rango");
+                                Insertado=0;
+                            }
+                            
+                            
+                            
+                            
+                        }else{
+                            //conjunto por comas {,,,}
+                            System.out.println("validandoconjcomas");
+                            System.out.println(Lexema.charAt(pos));
+                            String v=String.valueOf(Lexema.charAt(pos));
+                            String[] valores = Encontrado.split(",");
+                            int enc=0;
+                            for (String it : valores){
+                                System.out.println("---------------"+it);
+                                if(it.equals(v)){
+                                    enc=1;
+                                }
+                            }
+                            if(enc==1){
+                                System.out.println("-valido Conjunto ,");
+                                Insertado=1;
+                                Estado=Character.getNumericValue(Tabla[Estado][x+1].charAt(1))+1; 
+                                System.out.println(Estado);
+                                break;
+                            }else{
+                                System.out.println(Lexema.charAt(pos)+",");
+                                System.out.println("-No valido Conjunto ,");
+                                Insertado=0;
+                            }
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                    }//fin conjuntos
+
+
+
+
+                }
+            }
+            //System.out.println(pos+"--"+token);
+            //validamos si se inserto de lo contrario
+            if(Insertado==0){
+                bandera=false;
+                break;
+            }
+            
+            
+            
+            
+            
+            
+        }
+        return bandera;
     }
     
 }

@@ -4,8 +4,7 @@ graph [label="AFD: operaciones", labelloc=t, fontsize=20]; rankdir=LR;edge [colo
 "S2"[ label=S2]
 "S3"[ label=S3]
 secret_node [style=invis];
-secret_node -> S0 [label="inicio"];S1[peripheries=2];
-S3[peripheries=2];
+secret_node -> S0 [label="inicio"];S3[peripheries=2];
 "S0"->"S1"[label="digito"];
 "S1"->"S2"[label="\/"];
 "S1"->"S2"[label="\-"];

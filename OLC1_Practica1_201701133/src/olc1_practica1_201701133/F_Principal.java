@@ -35,6 +35,7 @@ public class F_Principal extends javax.swing.JFrame {
     ArrayList<Lista_Conjuntos> L_Tokens_Conj;
     ArrayList<Lista_ER> L_Tokens_ER;
     ArrayList<Lista_LexemasE> L_Tokens_Lex;
+    ArrayList<Arbol> L_Arbol;
     public F_Principal() {
         //creamos la Lista de Tokens
         this.L_Tokens = new ArrayList<>();
@@ -42,6 +43,7 @@ public class F_Principal extends javax.swing.JFrame {
         this.L_Tokens_ER=new ArrayList<>();
         this.L_Tokens_Conj=new ArrayList<>();
         this.L_Tokens_Lex=new ArrayList<>();
+        this.L_Arbol=new ArrayList<>();
         CantidadImagenes=0;
         
         initComponents();
@@ -370,6 +372,7 @@ public class F_Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        jTextArea1.setText("");
         // Evento de Expresiones Regulares
         Mini_Parser();
         //Creamos los Encabezados en el Jtree
@@ -421,24 +424,34 @@ public class F_Principal extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            //agrego el arbol a la lista
+            L_Arbol.add(Ab);
+        }
+        //Leer lexemas
+        for(int i=0;i<L_Tokens_Lex.size();i++){
+            //identificamos arbol para reconocer lexema
+            Arbol Arbol_Seleccionado=null;
+            for(int arb=0;arb<L_Arbol.size();arb++){
+                if(L_Tokens_Lex.get(i).getNombre().equals(L_Arbol.get(arb).NOMBRE_EXPRESIONREGULAR)){
+                    Arbol_Seleccionado=L_Arbol.get(arb);
+                }
+            }
+            
+            //Enviamos cadena a arbol para validar
+            boolean Bandera=false;
+            if(Arbol_Seleccionado==null){
+                //No inserta la expresion reularno existe
+            }else{
+                Bandera=Arbol_Seleccionado.ValidarLexema(L_Tokens_Lex.get(i).getContenido(),L_Tokens_Conj);
+            }
+            System.out.println("La Expresion: "+L_Tokens_Lex.get(i).getContenido()+" Es "+Bandera);
+            String texto=jTextArea1.getText();
+            texto+="\n"+"La Expresion: "+L_Tokens_Lex.get(i).getContenido()+" Con la Expresion Regular: "+Arbol_Seleccionado.NOMBRE_EXPRESIONREGULAR+" Es: "+Bandera;
+            jTextArea1.setText(texto);
+            
         }
         
-        
-//        System.out.println("CONJUNTOS");
-//        for(int i=0;i<L_Tokens_Conj.size();i++){
-//            System.out.println(L_Tokens_Conj.get(i).getNombre()+"    | ---------- |    "+L_Tokens_Conj.get(i).getContenido());
-//        }
-//        System.out.println("EXPRESIONES REGULARES");
-//        for(int i=0;i<L_Tokens_ER.size();i++){
-//            System.out.println(L_Tokens_ER.get(i).getNombre()+"    | ---------- |    ");
-//            for(int x=0;x<L_Tokens_ER.get(i).getER().size();x++){
-//                System.out.print(L_Tokens_ER.get(i).getER().get(x));
-//            }
-//        }
-//        System.out.println("LEXEMAS");
-//        for(int i=0;i<L_Tokens_Lex.size();i++){
-//            System.out.println(L_Tokens_Lex.get(i).getNombre()+"    | ---------- |    "+L_Tokens_Lex.get(i).getContenido());
-//        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
