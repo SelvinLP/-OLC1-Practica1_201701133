@@ -323,7 +323,7 @@ public class Arbol {
 
         CadenaImprimir+="</table></body></html>";
         
-        String ruta = "Reporte_Siguientes"+CantidadHTML+".html";
+        String ruta = "T_Siguientes"+CantidadHTML+".html";
         File archivo = new File(ruta);
         try {
             if (!archivo.exists()) {
@@ -500,7 +500,7 @@ public class Arbol {
 
         CadenaImprimir+="</table></body></html>";
         
-        String ruta = "Reporte_Transiciones"+CantidadHTML+".html";
+        String ruta = "T_Transiciones"+CantidadHTML+".html";
         File archivo = new File(ruta);
         try {
             if (!archivo.exists()) {

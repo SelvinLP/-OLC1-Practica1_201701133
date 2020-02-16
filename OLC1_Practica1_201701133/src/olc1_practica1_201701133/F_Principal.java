@@ -6,6 +6,8 @@
 package olc1_practica1_201701133;
 
 import Estructuras.*;
+import java.awt.BorderLayout;
+import java.awt.Image;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -13,6 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -21,6 +26,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class F_Principal extends javax.swing.JFrame {
     //Variables de Archivo
     public String Ruta;
+    public JTree tree;
+    public DefaultMutableTreeNode inicial;
     int CantidadImagenes;
     //Declaracion de Listas
     ArrayList<Lista_Tokens> L_Tokens;
@@ -38,6 +45,15 @@ public class F_Principal extends javax.swing.JFrame {
         CantidadImagenes=0;
         
         initComponents();
+        
+        //Jtree
+        inicial = new DefaultMutableTreeNode("/");
+        tree= new JTree(inicial);
+        tree.setBounds(510, 2, 166,400);
+        tree.add(new JScrollPane());
+        this.jPanel1.add(tree);
+        
+
     }
 
     /**
@@ -54,6 +70,9 @@ public class F_Principal extends javax.swing.JFrame {
         jTextPane1 = new javax.swing.JTextPane();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jButton3 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -86,29 +105,50 @@ public class F_Principal extends javax.swing.JFrame {
             }
         });
 
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Salida", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        jScrollPane2.setViewportView(jTextArea1);
+
+        jButton3.setText("Cargar Imagen");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 350, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 220, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(0, 79, Short.MAX_VALUE))
+                    .addComponent(jButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jMenu1.setText("Archivo");
@@ -185,14 +225,16 @@ public class F_Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -320,13 +362,34 @@ public class F_Principal extends javax.swing.JFrame {
         L_Tokens_Conj.clear();
         L_Tokens_Lex.clear();
         CantidadImagenes=0;
+        inicial.removeAllChildren();
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        model.reload();
         Scanner();
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Evento de Expresiones Regulares
         Mini_Parser();
+        //Creamos los Encabezados en el Jtree
+        //Arbol
+        DefaultMutableTreeNode nuevo=new DefaultMutableTreeNode("ARBOLES");
+        inicial.add(nuevo);
+        //Tabla Siguientes
+        DefaultMutableTreeNode nuevo2=new DefaultMutableTreeNode("TABLA SIGUIENTES");
+        inicial.add(nuevo2);
+        //tabla Estados o Transiciones
+        DefaultMutableTreeNode nuevo3=new DefaultMutableTreeNode("TABLA DE ESTADOS");
+        inicial.add(nuevo3);
+        //Diagrama de Estados
+        DefaultMutableTreeNode nuevo4=new DefaultMutableTreeNode("DIAG DE ESTADOS");
+        inicial.add(nuevo4);
+
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        model.reload();
         //Mandamos a Guardar Tokens en el Arbol
+        
         for(int i=0;i<L_Tokens_ER.size();i++){
             Arbol Ab=new Arbol();
             for(int x=0;x<L_Tokens_ER.get(i).getER().size();x++){
@@ -336,10 +399,24 @@ public class F_Principal extends javax.swing.JFrame {
                 //Pedimos Analisar arbol
                 Ab.NOMBRE_EXPRESIONREGULAR=L_Tokens_ER.get(i).getNombre();
                 Ab.AnalisarArbol();
+                //Graficar Arbol
                 Ab.GraficarArbol(CantidadImagenes);
+                DefaultMutableTreeNode G_Arbol=new DefaultMutableTreeNode("Arbol"+CantidadImagenes);
+                nuevo.add(G_Arbol);
+                //Graficar Tabla Siguientes
                 Ab.GraficarSiguientes(CantidadImagenes);
+                DefaultMutableTreeNode G_TSiguientes=new DefaultMutableTreeNode("T_Siguientes"+CantidadImagenes);
+                nuevo2.add(G_TSiguientes);
+                //Graficar Tabla Estados
                 Ab.GraficarTablaEstados(CantidadImagenes);
+                DefaultMutableTreeNode G_TEstado=new DefaultMutableTreeNode("T_Transiciones"+CantidadImagenes);
+                nuevo3.add(G_TEstado);
+                //Graficar Grafo
                 Ab.GraficarGrafo(CantidadImagenes);
+                DefaultMutableTreeNode G_Grafo=new DefaultMutableTreeNode("AFD"+CantidadImagenes);
+                nuevo4.add(G_Grafo);
+                
+                
                 CantidadImagenes++;
             } catch (IOException ex) {
                 Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
@@ -365,12 +442,16 @@ public class F_Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        
         try {
             // Evento generar REPORTE LEXICO
             Graficar_Reporte_Lexico(true);
         } catch (IOException ex) {
             Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
+        F_ReporteHTML Repor=new F_ReporteHTML("Reporte_Lexico");
+        Repor.setLocationRelativeTo(null);
+        Repor.show();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -380,7 +461,54 @@ public class F_Principal extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(F_Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
+        F_ReporteHTML Repor=new F_ReporteHTML("Reporte_Lexico");
+        Repor.setLocationRelativeTo(null);
+        Repor.show();
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        TreeSelectionModel smd = tree.getSelectionModel();
+        if(smd.getSelectionCount()>0){
+            
+            DefaultMutableTreeNode SeleccionadoPadre=(DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+            Object nodeInfo = SeleccionadoPadre.getUserObject();
+            String Cambio=nodeInfo.toString();
+            
+            //mostraos la imagen
+            String Formato="";
+            if(Cambio.charAt(0)==(char)84){
+                Formato=".html";
+                F_ReporteHTML Repor=new F_ReporteHTML(Cambio);
+                Repor.setLocationRelativeTo(null);
+                Repor.show();
+                
+            }else{
+                Formato=".png";
+                F_ReportePNG Repor=new F_ReportePNG();
+                File tem=new File(Cambio+Formato);
+                ImageIcon imagen=new ImageIcon(tem.toString());
+                Icon icono=new ImageIcon(imagen.getImage().getScaledInstance(Repor.jLabel1.getWidth(), Repor.jLabel1.getHeight(), Image.SCALE_SMOOTH));
+                Repor.jLabel1.setIcon(icono);
+                Repor.setLocationRelativeTo(null);
+                Repor.show();
+            }
+            
+            
+            
+            
+            try {
+
+            Runtime.getRuntime().exec("cmd /C "+Cambio+Formato);  
+
+            }catch (IOException ioe) {
+                //en caso de error
+                System.out.println (ioe);
+            }
+            
+        }
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -890,6 +1018,7 @@ public class F_Principal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -903,6 +1032,8 @@ public class F_Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem7;
     public javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JTextArea jTextArea1;
     public javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,3 +1,15 @@
 digraph AFD { 
-"S0"[ label=S0]"S1"[ label=S1]"S2"[ label=S2]"S3"[ label=S3]"S4"[ label=S4]
+graph [label="AFD: Expresion2", labelloc=t, fontsize=20]; rankdir=LR;edge [color=blue];node [color = mediumseagreen];"S0"[ label=S0]
+"S1"[ label=S1]
+"S2"[ label=S2]
+"S3"[ label=S3]
+"S4"[ label=S4]
+secret_node [style=invis];
+secret_node -> S0 [label="inicio"];"S0"->"S1"[label="abecedario"];
+"S1"->"S1"[label="abecedario"];
+"S1"->"S2"[label="conjnum"];
+"S2"->"S3"[label="\:"];
+"S3"->"S4"[label="abecedario"];
+"S4"->"S4"[label="abecedario"];
+
 }

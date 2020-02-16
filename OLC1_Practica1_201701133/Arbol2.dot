@@ -1,5 +1,5 @@
 digraph ARBOL { 
-rankdir=TB
+graph [label="Arbol: Expresion3", labelloc=t, fontsize=20]; rankdir=TB
 node[shape=record,style=filled] 
 "0"[label ="<C0>|P: 1 ,2 ,3|{<C1>No Anulable|Operador: \.}|U: 10|<C2>"]; 
 "2"[label ="<C0>|P: 1 ,2 ,3|{<C1>No Anulable|Operador: \.}|U: 9|<C2>"]; 
