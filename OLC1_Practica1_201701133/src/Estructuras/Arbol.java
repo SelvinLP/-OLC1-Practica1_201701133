@@ -558,9 +558,9 @@ public class Arbol {
         //agregamos estado de finalizacion
         for(int z=0;z<L_Transiciones.size();z++){
             for(int z2=0;z2<L_Transiciones.get(z).IdEstado.size();z2++){
-                System.out.println("FINAL---- "+maximo);
+                //System.out.println("FINAL---- "+maximo);
                 if(L_Transiciones.get(z).IdEstado.get(z2)==maximo){
-                    System.out.println("Valido"+z);
+                    //System.out.println("Valido"+z);
                     CadenaImprimir+=L_Transiciones.get(z).getNombreEstado()+"[peripheries=2];\n";
                 }
             }
@@ -713,6 +713,7 @@ public class Arbol {
                             pos++;
                             cad+=Lexema.charAt(pos);
                         }
+                        System.out.println("---"+cad+"---");
                         if(cad.equals(Nombre)){
                             System.out.println("-valido Cadena");
                             Insertado=1;
@@ -741,6 +742,21 @@ public class Arbol {
                             int a=(int)Encontrado.charAt(0);
                             int b=(int)Encontrado.charAt(2);
                             int valor=(int)Lexema.charAt(pos);
+                            if(Encontrado.length()>3){
+                                //rango de numeros
+                                System.out.println("llega aqui");
+                                 a=Character.getNumericValue(Encontrado.charAt(0));
+                                 b=Integer.parseInt(String.valueOf(Encontrado.charAt(2))+String.valueOf(Encontrado.charAt(3)));
+                                 valor=Character.getNumericValue(Lexema.charAt(pos));
+                                 System.out.println(a);
+                                 System.out.println(b);
+                                 System.out.println(valor);
+                            }else{
+                                 a=(int)Encontrado.charAt(0);
+                                 b=(int)Encontrado.charAt(2);
+                                 valor=(int)Lexema.charAt(pos);
+                            }
+                            
                             if(valor>=a && valor<=b){
                                 //cumple
                                 System.out.println("-valido Conjunto Rango");

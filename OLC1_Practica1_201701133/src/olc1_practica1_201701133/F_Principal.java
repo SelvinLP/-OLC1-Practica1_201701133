@@ -107,6 +107,7 @@ public class F_Principal extends javax.swing.JFrame {
             }
         });
 
+        jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jTextArea1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Salida", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -447,7 +448,7 @@ public class F_Principal extends javax.swing.JFrame {
             }
             System.out.println("La Expresion: "+L_Tokens_Lex.get(i).getContenido()+" Es "+Bandera);
             String texto=jTextArea1.getText();
-            texto+="\n"+"La Expresion: "+L_Tokens_Lex.get(i).getContenido()+" Con la Expresion Regular: "+Arbol_Seleccionado.NOMBRE_EXPRESIONREGULAR+" Es: "+Bandera;
+            texto+="\n"+"La Expresion: "+L_Tokens_Lex.get(i).getContenido()+"\t Con la Expresion Regular: "+Arbol_Seleccionado.NOMBRE_EXPRESIONREGULAR+"\t Es: "+Bandera;
             jTextArea1.setText(texto);
             
         }
