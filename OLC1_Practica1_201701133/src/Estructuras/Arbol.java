@@ -738,25 +738,73 @@ public class Arbol {
                         }
                         //Luego de encontrarlo empezamos a validar
                         //L~D
-                        if(Encontrado.charAt(1)==(char)126){
-                            int a=(int)Encontrado.charAt(0);
-                            int b=(int)Encontrado.charAt(2);
-                            int valor=(int)Lexema.charAt(pos);
+                        int o=0;
+                        for(int p=0;p<Encontrado.length();p++){
+                            if((Encontrado.charAt(p)==(char)126 && Encontrado.charAt(p+1)==(char)44) || (Encontrado.charAt(p)==(char)126 && Encontrado.charAt(p-1)==(char)44) ){
+                                o=1;
+                            }
+                        }
+                        if(o!=1){
+                            int a=0;
+                            int b=0;
+                            int valor=0;
+                            int regreso=0;
                             if(Encontrado.length()>3){
+                                System.out.println("ayor a 3");
                                 //rango de numeros
-                                System.out.println("llega aqui");
-                                 a=Character.getNumericValue(Encontrado.charAt(0));
-                                 b=Integer.parseInt(String.valueOf(Encontrado.charAt(2))+String.valueOf(Encontrado.charAt(3)));
-                                 valor=Character.getNumericValue(Lexema.charAt(pos));
-                                 System.out.println(a);
-                                 System.out.println(b);
-                                 System.out.println(valor);
+                                String a1="";
+                                String b1="";
+                                String v1="";
+                                int camb=0;
+                                for(int t=0;t<Encontrado.length();t++){
+                                    
+                                    if(Encontrado.charAt(t)==(char)126){
+                                        camb=1;
+                                        t++;
+                                    }
+                                    if(camb==0){
+                                        a1+=Encontrado.charAt(t);
+                                    }else{b1+=Encontrado.charAt(t);}
+                                }
+                                try{
+                                     a=Integer.parseInt(a1);
+                                    System.out.println("Primero: "+a);
+                                    b=Integer.parseInt(b1);
+                                    System.out.println("Segundo: "+b);
+                                 }catch(Exception e){
+                                 }
+                                 
+                                 v1=""+Lexema.charAt(pos);
+                                 System.out.println(v1);
+                                 while(true){
+                                     if((pos+1)<Lexema.length()){
+                                         System.out.println("Paso");
+                                         if(Character.isDigit(Lexema.charAt(pos+1))){
+                                             regreso++;
+                                             pos++;
+                                             System.out.println("---------proximo"+(pos+1));
+                                             v1+=Lexema.charAt(pos);
+                                        }else{
+                                             System.out.println("NO PASO");
+                                             break;
+                                         }
+                                     }else{
+                                         break;
+                                     }
+                                     
+                                 }
+                                 try{
+                                     valor=Integer.parseInt(v1);
+                                 }catch(Exception e){
+                                 }
+                                 
+                                 System.out.println(v1);
                             }else{
                                  a=(int)Encontrado.charAt(0);
                                  b=(int)Encontrado.charAt(2);
                                  valor=(int)Lexema.charAt(pos);
                             }
-                            
+                            System.out.println(Lexema.charAt(pos)+"----Rango");
                             if(valor>=a && valor<=b){
                                 //cumple
                                 System.out.println("-valido Conjunto Rango");
@@ -765,14 +813,16 @@ public class Arbol {
                                 System.out.println(Estado);
                                 break;
                             }else{
-                                System.out.println(Lexema.charAt(pos)+"Rango");
                                 System.out.println("-No valido Conjunto Rango");
                                 Insertado=0;
+                                if(regreso>0){
+                                    pos=pos-regreso;
+                                }
                             }
                             
                             
                             
-                            
+                         
                         }else{
                             //conjunto por comas {,,,}
                             System.out.println("validandoconjcomas");
@@ -780,24 +830,36 @@ public class Arbol {
                             String v=String.valueOf(Lexema.charAt(pos));
                             String[] valores = Encontrado.split(",");
                             int enc=0;
+                            //coproacion de espacio en el conjunto
+                            int espacio=0;
+                            for(int esp=1;esp<Encontrado.length();esp++){
+                                if((Encontrado.charAt(esp-1)==(char)32) &&  (Encontrado.charAt(esp)==(char)32)){
+                                    espacio=1;
+                                }
+                            }
+                            if(espacio==1){
+                                if(Lexema.charAt(pos)==(char)32){
+                                    enc=1;
+                                }
+                            }
                             for (String it : valores){
                                 System.out.println("---------------"+it);
                                 if(it.equals(v)){
                                     enc=1;
                                 }
                             }
+                            
+                            System.out.println(Lexema.charAt(pos)+"----CONJUNTO CONMA");
                             if(enc==1){
-                                System.out.println("-valido Conjunto ,");
+                                System.out.println("-valido Conjunto-");
                                 Insertado=1;
                                 Estado=Character.getNumericValue(Tabla[Estado][x+1].charAt(1))+1; 
                                 System.out.println(Estado);
                                 break;
                             }else{
-                                System.out.println(Lexema.charAt(pos)+",");
-                                System.out.println("-No valido Conjunto ,");
+                                System.out.println("-No valido Conjunto-");
                                 Insertado=0;
                             }
-                            
                         }
                         
                         
