@@ -1,0 +1,37 @@
+{
+
+
+<!
+	Definicion de mis expresiones regulares
+!>
+CONJ: num -> 0~9;
+CONJ: abcd -> A~Z;
+CONJ: BINARIO -> 0,1;
+
+
+
+<!
+	Definicion de mis expresiones regulares
+!>
+operaDecimales -> . . + {num} . "." + {num} . | "+" | "-" | "*" | "/" "%" . + {num} . "." + {num};
+binarios -> . . . . . "si" + {BINARIO} "=" {num} + | {abcd} "_" . + {BINARIO} . + {abcd} | "?" +{num}; 
+decnum -> . +{abecedario}  . {conjnum} ? . ":" +{abecedario};
+
+
+%%
+%%
+
+<!
+	Definicion de lexemas
+!>
+
+operaDecimales : "5.5+13.5+1.10002%56123.89*13.5-0.2/0";
+binarios : "si 111=7 ENTONCES_EL_BINARIO 1010 ES ?";
+binarios : "si 111=7 ENTONCES_EL_BINARIO 1010 ES 10";
+decnum : "numero 5: cinco";
+decnum : "numero 2";
+
+<!
+	Fin del archivo
+!>
+}

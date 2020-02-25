@@ -1,21 +1,23 @@
 digraph AFD { 
-graph [label="AFD: operaciones", labelloc=t, fontsize=20]; rankdir=LR;edge [color=blue];node [color = mediumseagreen];"S0"[ label=S0]
+graph [label="AFD: EXP4", labelloc=t, fontsize=20]; rankdir=LR;edge [color=blue];node [color = mediumseagreen];"S0"[ label=S0]
 "S1"[ label=S1]
 "S2"[ label=S2]
 "S3"[ label=S3]
+"S4"[ label=S4]
+"S5"[ label=S5]
+"S6"[ label=S6]
 secret_node [style=invis];
-secret_node -> S0 [label="inicio"];S3[peripheries=2];
-"S0"->"S1"[label="digito"];
-"S1"->"S2"[label="\/"];
-"S1"->"S2"[label="\-"];
-"S1"->"S2"[label="\+"];
-"S1"->"S1"[label="digito"];
-"S1"->"S2"[label="\*"];
-"S2"->"S3"[label="digito"];
-"S3"->"S2"[label="\/"];
-"S3"->"S2"[label="\-"];
-"S3"->"S2"[label="\+"];
-"S3"->"S3"[label="digito"];
-"S3"->"S2"[label="\*"];
+secret_node -> S0 [label="inicio"];S6[peripheries=2];
+"S0"->"S0"[label="abecedario"];
+"S0"->"S0"[label="\_"];
+"S0"->"S1"[label="conjnum"];
+"S1"->"S2"[label="\>"];
+"S1"->"S1"[label="conjnum"];
+"S2"->"S3"[label="conjnum"];
+"S3"->"S4"[label=" "];
+"S3"->"S3"[label="conjnum"];
+"S4"->"S5"[label="TRUE"];
+"S4"->"S5"[label="FALSE"];
+"S5"->"S6"[label="\."];
 
 }

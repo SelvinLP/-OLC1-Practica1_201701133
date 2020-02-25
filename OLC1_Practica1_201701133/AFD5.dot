@@ -1,0 +1,8 @@
+digraph AFD { 
+graph [label="AFD: ExpReg1", labelloc=t, fontsize=20]; rankdir=LR;edge [color=blue];node [color = mediumseagreen];"S0"[ label=S0]
+"S1"[ label=S1]
+secret_node [style=invis];
+secret_node -> S0 [label="inicio"];S1[peripheries=2];
+"S0"->"S1"[label="primerLexema"];
+
+}

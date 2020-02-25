@@ -1,8 +1,8 @@
 digraph ARBOL { 
-graph [label="Arbol: Nex1", labelloc=t, fontsize=20]; rankdir=TB
+graph [label="Arbol: ExpReg1", labelloc=t, fontsize=20]; rankdir=TB
 node[shape=record,style=filled] 
 "0"[label ="<C0>|P: 1|{<C1>No Anulable|Operador: \.}|U: 2|<C2>"]; 
-"2"[label ="<C0>|P: 1|{<C1>No Anulable|Cadena: si}|U: 1|<C2>"]; 
+"2"[label ="<C0>|P: 1|{<C1>No Anulable|Cadena: primerLexema}|U: 1|<C2>"]; 
 "0":C0->"2"; 
 "1"[label ="<C0>|P: 2|{<C1>No Anulable|Operador: \#}|U: 2|<C2>"]; 
 "0":C2->"1"; 
